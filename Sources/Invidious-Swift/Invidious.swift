@@ -1,6 +1,6 @@
 import Foundation
 
-public struct Invidious_Swift {
+public struct Inv {
     public private(set) var text = "Hello, World!"
     
     public init() {
@@ -10,8 +10,9 @@ public struct Invidious_Swift {
         
     }
     
-    func getJson(url: URL, completion: @escaping (_ value: Dictionary<String,Any>?) -> Void) {
-        URLSession.shared.dataTask(with: url, completionHandler: { data, _, _ in
+    static func getJson(url: URL, completion: @escaping (_ value: Dictionary<String,Any>?) -> Void) {
+        
+        URLSession.shared.dataTask(with: url) { data, _, _ in
             if let d = data {
                 if let value = String(data: d, encoding: String.Encoding.ascii) {
                     if let jsonData = value.data(using: String.Encoding.utf8) {
@@ -24,6 +25,6 @@ public struct Invidious_Swift {
                     }
                 }
             }
-        }).resume()
+        }.resume()
     }
 }
