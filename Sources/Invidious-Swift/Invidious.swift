@@ -1,30 +1,101 @@
+//
+//  API.swift
+//  Invidious-Swift
+//
+//  Created by llsc12 on 10/04/2022.
+//
+
 import Foundation
 
 public struct Inv {
-    public private(set) var text = "Hello, World!"
-    
-    public init() {
+    // MARK: - Package stuff
+    static func setInstance(url: URL) async -> Bool {
+        return false
     }
     
-    func setInstance(url: String) -> Void {
+    // MARK: - Endpoint Wrapping
+    
+    static func stats() async -> Stats! {
+        let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
+        guard let instance = URL(string: instanceURLstring) else {
+            return nil
+        }
         
+        do {
+            let (data, _) = try await URLSession.shared.data(from: instance.appendingPathComponent("api/v1/stats"))
+            let stats = try? JSONDecoder().decode(Stats.self, from: data)
+            return stats
+            
+        } catch {
+            return nil
+        }
     }
     
-    static func getJson(url: URL, completion: @escaping (_ value: Dictionary<String,Any>?) -> Void) {
+    static func video(id: String, cc: String? = nil) async -> Video! {
+        let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
+        guard let instance = URL(string: instanceURLstring) else {
+            return nil
+        }
         
-        URLSession.shared.dataTask(with: url) { data, _, _ in
-            if let d = data {
-                if let value = String(data: d, encoding: String.Encoding.ascii) {
-                    if let jsonData = value.data(using: String.Encoding.utf8) {
-                        do {
-                            let json = try JSONSerialization.jsonObject(with: jsonData, options: []) as! [String: Any]
-                            return completion(json)
-                        } catch {
-                            return completion(["error": error.localizedDescription])
-                        }
-                    }
-                }
+        do {
+            let (data, _) = try await URLSession.shared.data(from: instance.appendingPathComponent(cc == nil ? "api/v1/videos/\(id)" : "api/v1/videos/\(id)?cc=\(cc ?? "us")"))
+            let video = try? JSONDecoder().decode(Video.self, from: data)
+            return video
+        } catch {
+            return nil
+        }
+    }
+    
+    static func comments(id: String, continuation: String? = nil, sortby: SortByTypes? = nil, source: CommentSources? = nil) async -> Comments! {
+        let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
+        guard let instance = URL(string: instanceURLstring) else {
+            return nil
+        }
+        
+        do {
+            var url = instance.appendingPathComponent("api/v1/comments/\(id)")
+            var mutableURL: URLComponents = URLComponents(string: url.absoluteString)!
+            if (continuation != nil) {
+                mutableURL.queryItems?.append(URLQueryItem(name: "continuation", value: continuation))
             }
-        }.resume()
+            if (sortby != nil) {
+                mutableURL.queryItems?.append(URLQueryItem(name: "sort_by", value: sortby?.rawValue))
+            }
+            if (source != nil) {
+                mutableURL.queryItems?.append(URLQueryItem(name: "source", value: source?.rawValue))
+            }
+            url = mutableURL.url!
+            
+            let (data, _) = try await URLSession.shared.data(from: url)
+            let comments = try? JSONDecoder().decode(Comments.self, from: data)
+            return comments
+        } catch {
+            return nil
+        }
     }
+    
+    static func trending(cc: String? = nil) async -> Trending! {
+        let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
+        guard let instance = URL(string: instanceURLstring) else {
+            return nil
+        }
+        
+        do {
+            let (data, _) = try await URLSession.shared.data(from: instance.appendingPathComponent(cc == nil ? "api/v1/trending" : "api/v1/trending?cc=\(cc ?? "us")"))
+            let trending = try? JSONDecoder().decode(Trending.self, from: data)
+            return trending
+            
+        } catch {
+            return nil
+        }
+    }
+}
+
+enum SortByTypes: String {
+    case top = "top"
+    case new = "new"
+}
+enum CommentSources: String {
+    case youtube = "youtube"
+    case reddit = "reddit"
 }
