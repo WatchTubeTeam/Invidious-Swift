@@ -4,6 +4,7 @@
 //
 //  Created by llsc12 on 10/04/2022.
 //
+//  Structures generated with quicktype but patched manually
 
 import Foundation
 
@@ -87,17 +88,17 @@ struct Video: Codable {
     let videoThumbnails: [Thumbnail]
     let storyboards: [Storyboard]
     let videoDescription, descriptionHTML: String
-    let published: Int
+    let published: Double
     let publishedText: String
     let keywords: [String]
-    let viewCount, likeCount, dislikeCount: Int
+    let viewCount, likeCount, dislikeCount: Double
     let paid, premium, isFamilyFriendly: Bool
     let allowedRegions: [String]
     let genre: String
     let genreURL: JSONNull?
-    let author: Author
-    let authorID: AuthorID
-    let authorURL: AuthorURL
+    let author: String
+    let authorID: String
+    let authorURL: String
     let authorThumbnails: [Thumbnail]
     let subCountText: String
     let lengthSeconds: Int
@@ -132,7 +133,7 @@ struct AdaptiveFormat: Codable {
     let index, bitrate, adaptiveFormatInit: String
     let url: String
     let itag, type, clen, lmt: String
-    let projectionType: ProjectionType
+    let projectionType: String
     let fps: Int?
     let container: Container?
     let encoding, resolution, qualityLabel: String?
@@ -148,25 +149,6 @@ enum Container: String, Codable {
     case m4A = "m4a"
     case mp4 = "mp4"
     case webm = "webm"
-}
-
-enum ProjectionType: String, Codable {
-    case rectangular = "RECTANGULAR"
-}
-
-enum Author: String, Codable {
-    case kurzgesagtÂInANutshell = "Kurzgesagt â€“ In a Nutshell"
-    case zachStar = "Zach Star"
-}
-
-enum AuthorID: String, Codable {
-    case uCSXVk37BltHxD1RDPwtNM8Q = "UCsXVk37bltHxD1rDPwtNM8Q"
-    case uCpCSAcbqsSjEVfkHMFY9W = "UCpCSAcbqs-sjEVfk_hMfY9w"
-}
-
-enum AuthorURL: String, Codable {
-    case channelUCSXVk37BltHxD1RDPwtNM8Q = "/channel/UCsXVk37bltHxD1rDPwtNM8Q"
-    case channelUCpCSAcbqsSjEVfkHMFY9W = "/channel/UCpCSAcbqs-sjEVfk_hMfY9w"
 }
 
 // MARK: - VideoCaption
@@ -193,9 +175,9 @@ struct FormatStream: Codable {
 struct RecommendedVideo: Codable {
     let videoID, title: String
     let videoThumbnails: [Thumbnail]
-    let author: Author
-    let authorURL: AuthorURL
-    let authorID: AuthorID
+    let author: String
+    let authorURL: String
+    let authorID: String
     let lengthSeconds: Int
     let viewCountText: String
     let viewCount: Int
@@ -363,7 +345,7 @@ typealias Search = [SearchElement]
 
 // MARK: - Encode/decode helpers
 
-fileprivate class JSONNull: Codable, Hashable {
+class JSONNull: Codable, Hashable {
 
     public static func == (lhs: JSONNull, rhs: JSONNull) -> Bool {
         return true
