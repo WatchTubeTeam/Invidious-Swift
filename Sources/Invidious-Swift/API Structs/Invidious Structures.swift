@@ -49,7 +49,7 @@ public struct Playlist: Codable {
 }
 
 // MARK: - PlaylistVideo
-struct PlaylistVideo: Codable {
+public struct PlaylistVideo: Codable {
     let title, videoID, author, authorID: String
     let authorURL: String
     let videoThumbnails: [AuthorMedia]
@@ -93,7 +93,7 @@ public struct Channel: Codable {
 }
 
 // MARK: - RelatedChannel
-struct RelatedChannel: Codable {
+public struct RelatedChannel: Codable {
     let author, authorID, authorURL: String
     let authorThumbnails: [AuthorMedia]
 
@@ -106,29 +106,29 @@ struct RelatedChannel: Codable {
 }
 
 // MARK: - AuthorMedia
-struct AuthorMedia: Codable {
+public struct AuthorMedia: Codable {
     let url: String
     let width, height: Int
     let quality: Quality?
 }
 
 // MARK: - Metadata
-struct Metadata: Codable {
+public struct Metadata: Codable {
     let updatedAt, lastChannelRefreshedAt: Int
 }
 
 // MARK: - Software
-struct Software: Codable {
+public struct Software: Codable {
     let name, version, branch: String
 }
 
 // MARK: - Usage
-struct Usage: Codable {
+public struct Usage: Codable {
     let users: Users
 }
 
 // MARK: - Users
-struct Users: Codable {
+public struct Users: Codable {
     let total, activeHalfyear, activeMonth: Int
 }
 
@@ -153,18 +153,18 @@ public struct PopularElement: Codable {
     }
 }
 
-enum PopularType: String, Codable {
+public enum PopularType: String, Codable {
     case shortVideo = "shortVideo"
 }
 
 // MARK: - Thumbnail
-struct Thumbnail: Codable {
+public struct Thumbnail: Codable {
     let quality: Quality?
     let url: String
     let width, height: Int
 }
 
-enum Quality: String, Codable {
+public enum Quality: String, Codable {
     case end = "end"
     case high = "high"
     case maxres = "maxres"
@@ -224,7 +224,7 @@ public struct Video: Codable {
 }
 
 // MARK: - AdaptiveFormat
-struct AdaptiveFormat: Codable {
+public struct AdaptiveFormat: Codable {
     let index, bitrate, adaptiveFormatInit: String
     let url: String
     let itag, type, clen, lmt: String
@@ -240,14 +240,14 @@ struct AdaptiveFormat: Codable {
     }
 }
 
-enum Container: String, Codable {
+public enum Container: String, Codable {
     case m4A = "m4a"
     case mp4 = "mp4"
     case webm = "webm"
 }
 
 // MARK: - VideoCaption
-struct VideoCaption: Codable {
+public struct VideoCaption: Codable {
     let label, languageCode, url: String
 
     enum CodingKeys: String, CodingKey {
@@ -258,7 +258,7 @@ struct VideoCaption: Codable {
 }
 
 // MARK: - FormatStream
-struct FormatStream: Codable {
+public struct FormatStream: Codable {
     let url: String
     let itag, type, quality: String
     let fps: Int
@@ -267,7 +267,7 @@ struct FormatStream: Codable {
 }
 
 // MARK: - RecommendedVideo
-struct RecommendedVideo: Codable {
+public struct RecommendedVideo: Codable {
     let videoID, title: String
     let videoThumbnails: [Thumbnail]
     let author: String
@@ -287,7 +287,7 @@ struct RecommendedVideo: Codable {
 }
 
 // MARK: - Storyboard
-struct Storyboard: Codable {
+public struct Storyboard: Codable {
     let url: String
     let templateURL: String
     let width, height, count, interval: Int
@@ -300,14 +300,14 @@ struct Storyboard: Codable {
     }
 }
 
-enum VideoType: String, Codable {
+public enum VideoType: String, Codable {
     case channel = "channel"
     case playlist = "playlist"
     case video = "video"
 }
 
 // MARK: - Comments
-public struct Comments: Codable {
+public public struct Comments: Codable {
     let commentCount: Int
     let videoID: String
     let comments: [Comment]
@@ -321,7 +321,7 @@ public struct Comments: Codable {
 }
 
 // MARK: - Comment
-struct Comment: Codable {
+public struct Comment: Codable {
     let author: String
     let authorThumbnails: [Thumbnail]
     let authorID, authorURL: String
@@ -347,7 +347,7 @@ struct Comment: Codable {
 }
 
 // MARK: - Replies
-struct Replies: Codable {
+public struct Replies: Codable {
     let replyCount: Int
     let continuation: String
 }
@@ -358,7 +358,7 @@ public struct Captions: Codable {
 }
 
 // MARK: - CaptionsCaption
-struct CaptionsCaption: Codable {
+public struct CaptionsCaption: Codable {
     let label, languageCode, url: String
 }
 
@@ -422,7 +422,7 @@ public struct SearchElement: Codable {
 }
 
 // MARK: - VideoElement
-struct VideoElement: Codable {
+public struct VideoElement: Codable {
     let title, videoID: String
     let lengthSeconds: Int
     let videoThumbnails: [Thumbnail]
@@ -440,7 +440,7 @@ public typealias Search = [SearchElement]
 
 // MARK: - Encode/decode helpers
 
-class JSONNull: Codable, Hashable {
+public class JSONNull: Codable, Hashable {
 
     public static func == (lhs: JSONNull, rhs: JSONNull) -> Bool {
         return true
