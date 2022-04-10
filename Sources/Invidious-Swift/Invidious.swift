@@ -13,8 +13,7 @@ public struct inv {
         return false
     }
     
-    // MARK: - Endpoint Wrapping
-    
+    // MARK: - Endpoint - Stats
     static func stats() async -> Stats! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
@@ -31,6 +30,7 @@ public struct inv {
         }
     }
     
+    // MARK: - Endpoint - Video
     static func video(id: String, cc: String? = nil) async -> Video! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
@@ -48,6 +48,7 @@ public struct inv {
         }
     }
     
+    // MARK: - Endpoint - Comments
     static func comments(id: String, continuation: String? = nil, sortby: SortByTypes? = nil, source: CommentSources? = nil) async -> Comments! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
@@ -76,6 +77,7 @@ public struct inv {
         }
     }
     
+    // MARK: - Endpoint - Captions
     static func captions(id: String) async -> Captions! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
@@ -92,14 +94,26 @@ public struct inv {
         }
     }
     
-    static func trending(cc: String? = nil) async -> Trending! {
+    
+    
+    // MARK: - Endpoint - Trending
+    static func trending(cc: String? = nil, type: TrendingTypes? = .none) async -> Trending! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
             return nil
         }
         
         do {
-            let url = instance.appendingPathComponent(cc == nil ? "api/v1/trending" : "api/v1/trending?cc=\(cc ?? "us")")
+            var url = instance.appendingPathComponent("api/v1/trending")
+            var mutableURL: URLComponents = URLComponents(string: url.absoluteString)!
+            if (cc != nil) {
+                mutableURL.queryItems?.append(URLQueryItem(name: "cc", value: cc))
+            }
+            if (type != nil) {
+                mutableURL.queryItems?.append(URLQueryItem(name: "type", value: type?.rawValue))
+            }
+            url = mutableURL.url!
+            
             let (data, _) = try await URLSession.shared.data(from: url)
             let trending = try? JSONDecoder().decode(Trending.self, from: data)
             return trending
@@ -107,7 +121,142 @@ public struct inv {
             return nil
         }
     }
+    
+    // MARK: - Endpoint - Popular
+    static func popular() async -> Popular! {
+        let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
+        guard let instance = URL(string: instanceURLstring) else {
+            return nil
+        }
+        
+        do {
+            let url = instance.appendingPathComponent("api/v1/popular")
+            
+            let (data, _) = try await URLSession.shared.data(from: url)
+            let popular = try? JSONDecoder().decode(Popular.self, from: data)
+            return popular
+        } catch {
+            return nil
+        }
+    }
+    
+    // MARK: - Endpoint - Channel
+    static func channel(udid: String, sortby: ChannelSortByTypes? = .none) async -> Channel! {
+        let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
+        guard let instance = URL(string: instanceURLstring) else {
+            return nil
+        }
+        
+        do {
+            var url = instance.appendingPathComponent("api/v1/channels/\(udid)")
+            var mutableURL: URLComponents = URLComponents(string: url.absoluteString)!
+            
+            if (sortby != nil) {
+                mutableURL.queryItems?.append(URLQueryItem(name: "sort_by", value: sortby?.rawValue))
+            }
+            url = mutableURL.url!
+            
+            let (data, _) = try await URLSession.shared.data(from: url)
+            let channel = try? JSONDecoder().decode(Channel.self, from: data)
+            return channel
+        } catch {
+            return nil
+        }
+    }
+    
+    // MARK: - Endpoint - Channel videos
+    static func channelVideos(udid: String, page: Int = 1, sortby: ChannelSortByTypes? = .none) async -> Channel! {
+        let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
+        guard let instance = URL(string: instanceURLstring) else {
+            return nil
+        }
+        
+        do {
+            var url = instance.appendingPathComponent("api/v1/channels/videos/\(udid)")
+            var mutableURL: URLComponents = URLComponents(string: url.absoluteString)!
+            
+            if (sortby != nil) {
+                mutableURL.queryItems?.append(URLQueryItem(name: "sort_by", value: sortby?.rawValue))
+            }
+            mutableURL.queryItems?.append(URLQueryItem(name: "page", value: String(page)))
+            url = mutableURL.url!
+            
+            let (data, _) = try await URLSession.shared.data(from: url)
+            let channel = try? JSONDecoder().decode(Channel.self, from: data)
+            return channel
+        } catch {
+            return nil
+        }
+    }
+    
+    // MARK: - Endpoint - Search
+    static func search(q: String, page: Int = 1) async -> Search! {
+        let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
+        guard let instance = URL(string: instanceURLstring) else {
+            return nil
+        }
+        
+        do {
+            var url = instance.appendingPathComponent("api/v1/search")
+            var mutableURL: URLComponents = URLComponents(string: url.absoluteString)!
+            mutableURL.queryItems?.append(URLQueryItem(name: "q", value: q))
+            mutableURL.queryItems?.append(URLQueryItem(name: "page", value: String(page)))
+            url = mutableURL.url!
+            
+            let (data, _) = try await URLSession.shared.data(from: url)
+            let search = try? JSONDecoder().decode(Search.self, from: data)
+            return search
+        } catch {
+            return nil
+        }
+    }
+    
+    // MARK: - Endpoint - Search Suggestions
+    static func searchSuggestions(q: String) async -> Suggestions! {
+        let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
+        guard let instance = URL(string: instanceURLstring) else {
+            return nil
+        }
+        
+        do {
+            var url = instance.appendingPathComponent("api/v1/search/suggestions")
+            var mutableURL: URLComponents = URLComponents(string: url.absoluteString)!
+            mutableURL.queryItems?.append(URLQueryItem(name: "q", value: q))
+            url = mutableURL.url!
+            
+            let (data, _) = try await URLSession.shared.data(from: url)
+            let suggest = try? JSONDecoder().decode(Suggestions.self, from: data)
+            return suggest
+        } catch {
+            return nil
+        }
+    }
+    
+    // MARK: - Endpoint - Playlist
+    static func playlist(plid: String, page: Int) async -> Playlist! {
+        let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
+        guard let instance = URL(string: instanceURLstring) else {
+            return nil
+        }
+        
+        do {
+            var url = instance.appendingPathComponent("api/v1/playlists/\(plid)")
+            var mutableURL: URLComponents = URLComponents(string: url.absoluteString)!
+            mutableURL.queryItems?.append(URLQueryItem(name: "page", value: String(page)))
+            url = mutableURL.url!
+            
+            let (data, _) = try await URLSession.shared.data(from: url)
+            let playlist = try? JSONDecoder().decode(Playlist.self, from: data)
+            return playlist
+        } catch {
+            return nil
+        }
+    }
+    
+    // MARK: - End of Endpoints
 }
+
+// MARK: - Enums - for parameters of endpoints
 
 enum SortByTypes: String {
     case top = "top"
@@ -116,4 +265,15 @@ enum SortByTypes: String {
 enum CommentSources: String {
     case youtube = "youtube"
     case reddit = "reddit"
+}
+enum TrendingTypes: String {
+    case music = "music"
+    case gaming = "gaming"
+    case news = "news"
+    case movies = "movies"
+}
+enum ChannelSortByTypes: String {
+    case newest = "newest"
+    case oldest = "oldest"
+    case popular = "popular"
 }

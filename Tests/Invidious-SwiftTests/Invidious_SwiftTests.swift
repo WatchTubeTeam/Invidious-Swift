@@ -2,10 +2,6 @@ import XCTest
 @testable import Invidious_Swift
 
 final class Invidious_SwiftTests: XCTestCase {
-    func testStr() async throws {
-        let str = await inv.captions(id: "eTcVLqKpZJc").captions[0]
-        print("[InvTesting] \(str.downloadURL())")
-    }
     func testMain() async throws {
         //idk how to do tests
         var issues: [String] = []
@@ -31,14 +27,19 @@ final class Invidious_SwiftTests: XCTestCase {
         } else {
             issues.append("captions")
         }
+        if (await inv.channel(udid: "UCJ0-OtVpF0wOKEqT2Z1HEtA").author == "ElectroBOOM") {
+            check += 1
+        } else {
+            issues.append("channel")
+        }
         
         //MARK: - Verify
-        
-        if check != 4 {
-            print("[InvTesting] Test failed, refer to issues caught below")
+        let total = 5
+        if check < total && issues.count != 0 {
+            print("[InvTesting] Test failed, refer to issues caught below (\(check)/\(total)")
             print("[InvTesting] \(issues)")
         } else {
-            print("[InvTesting] Test succeeded")
+            print("[InvTesting] Test succeeded (\(check)/\(total))")
         }
     }
 }
