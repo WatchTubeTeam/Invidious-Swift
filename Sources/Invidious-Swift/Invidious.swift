@@ -9,12 +9,12 @@ import Foundation
 
 public struct inv {
     // MARK: - Package stuff
-    static func setInstance(url: URL) async -> Bool {
+    static public func setInstance(url: URL) async -> Bool {
         return false
     }
     
     // MARK: - Endpoint - Stats
-    static func stats() async -> Stats! {
+    static public func stats() async -> Stats! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
             return nil
@@ -31,7 +31,7 @@ public struct inv {
     }
     
     // MARK: - Endpoint - Video
-    static func video(id: String, cc: String? = nil) async -> Video! {
+    static public func video(id: String, cc: String? = nil) async -> Video! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
             return nil
@@ -49,7 +49,7 @@ public struct inv {
     }
     
     // MARK: - Endpoint - Comments
-    static func comments(id: String, continuation: String? = nil, sortby: SortByTypes? = nil, source: CommentSources? = nil) async -> Comments! {
+    static public func comments(id: String, continuation: String? = nil, sortby: SortByTypes? = nil, source: CommentSources? = nil) async -> Comments! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
             return nil
@@ -78,7 +78,7 @@ public struct inv {
     }
     
     // MARK: - Endpoint - Captions
-    static func captions(id: String) async -> Captions! {
+    static public func captions(id: String) async -> Captions! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
             return nil
@@ -97,7 +97,7 @@ public struct inv {
     
     
     // MARK: - Endpoint - Trending
-    static func trending(cc: String? = nil, type: TrendingTypes? = .none) async -> Trending! {
+    static public func trending(cc: String? = nil, type: TrendingTypes? = .none) async -> Trending! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
             return nil
@@ -123,7 +123,7 @@ public struct inv {
     }
     
     // MARK: - Endpoint - Popular
-    static func popular() async -> Popular! {
+    static public func popular() async -> Popular! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
             return nil
@@ -141,7 +141,7 @@ public struct inv {
     }
     
     // MARK: - Endpoint - Channel
-    static func channel(udid: String, sortby: ChannelSortByTypes? = .none) async -> Channel! {
+    static public func channel(udid: String, sortby: ChannelSortByTypes? = .none) async -> Channel! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
             return nil
@@ -165,7 +165,7 @@ public struct inv {
     }
     
     // MARK: - Endpoint - Channel videos
-    static func channelVideos(udid: String, page: Int = 1, sortby: ChannelSortByTypes? = .none) async -> Channel! {
+    static public func channelVideos(udid: String, page: Int = 1, sortby: ChannelSortByTypes? = .none) async -> Channel! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
             return nil
@@ -190,7 +190,7 @@ public struct inv {
     }
     
     // MARK: - Endpoint - Search
-    static func search(q: String, page: Int = 1) async -> Search! {
+    static public func search(q: String, page: Int = 1) async -> Search! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
             return nil
@@ -212,7 +212,7 @@ public struct inv {
     }
     
     // MARK: - Endpoint - Search Suggestions
-    static func searchSuggestions(q: String) async -> Suggestions! {
+    static public func searchSuggestions(q: String) async -> Suggestions! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
             return nil
@@ -233,7 +233,7 @@ public struct inv {
     }
     
     // MARK: - Endpoint - Playlist
-    static func playlist(plid: String, page: Int) async -> Playlist! {
+    static public func playlist(plid: String, page: Int) async -> Playlist! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
             return nil
@@ -258,21 +258,21 @@ public struct inv {
 
 // MARK: - Enums - for parameters of endpoints
 
-enum SortByTypes: String {
+public enum SortByTypes: String {
     case top = "top"
     case new = "new"
 }
-enum CommentSources: String {
+public enum CommentSources: String {
     case youtube = "youtube"
     case reddit = "reddit"
 }
-enum TrendingTypes: String {
+public enum TrendingTypes: String {
     case music = "music"
     case gaming = "gaming"
     case news = "news"
     case movies = "movies"
 }
-enum ChannelSortByTypes: String {
+public enum ChannelSortByTypes: String {
     case newest = "newest"
     case oldest = "oldest"
     case popular = "popular"

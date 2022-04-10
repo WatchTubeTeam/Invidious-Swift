@@ -9,7 +9,7 @@
 import Foundation
 
 // MARK: - Stats
-struct Stats: Codable {
+public struct Stats: Codable {
     let version: String
     let software: Software
     let openRegistrations: Bool
@@ -18,13 +18,13 @@ struct Stats: Codable {
 }
 
 // MARK: - Suggestions
-struct Suggestions: Codable {
+public struct Suggestions: Codable {
     let query: String
     let suggestions: [String]
 }
 
 // MARK: - Playlist
-struct Playlist: Codable {
+public struct Playlist: Codable {
     let type: VideoType
     let title, playlistID: String
     let playlistThumbnail: String
@@ -69,7 +69,7 @@ struct PlaylistVideo: Codable {
 }
 
 // MARK: - Channel
-struct Channel: Codable {
+public struct Channel: Codable {
     let author: String
     let authorID: String
     let authorURL: String
@@ -133,7 +133,7 @@ struct Users: Codable {
 }
 
 // MARK: - PopularElement
-struct PopularElement: Codable {
+public struct PopularElement: Codable {
     let type: PopularType
     let title, videoID: String
     let videoThumbnails: [Thumbnail]
@@ -177,7 +177,7 @@ enum Quality: String, Codable {
 }
 
 // MARK: - Video
-struct Video: Codable {
+public struct Video: Codable {
     let type: VideoType
     let title, videoID: String
     let videoThumbnails: [Thumbnail]
@@ -307,7 +307,7 @@ enum VideoType: String, Codable {
 }
 
 // MARK: - Comments
-struct Comments: Codable {
+public struct Comments: Codable {
     let commentCount: Int
     let videoID: String
     let comments: [Comment]
@@ -353,7 +353,7 @@ struct Replies: Codable {
 }
 
 // MARK: - Captions
-struct Captions: Codable {
+public struct Captions: Codable {
     let captions: [CaptionsCaption]
 }
 
@@ -363,7 +363,7 @@ struct CaptionsCaption: Codable {
 }
 
 // MARK: - TrendingElement
-struct TrendingElement: Codable {
+public struct TrendingElement: Codable {
     let type: VideoType
     let title, videoID, author, authorID: String
     let authorURL: String
@@ -388,7 +388,7 @@ struct TrendingElement: Codable {
 }
 
 // MARK: - SearchElement
-struct SearchElement: Codable {
+public struct SearchElement: Codable {
     let type: VideoType
     let title, videoID: String?
     let author, authorID, authorURL: String
@@ -434,9 +434,9 @@ struct VideoElement: Codable {
     }
 }
 
-typealias Popular = [PopularElement]
-typealias Trending = [TrendingElement]
-typealias Search = [SearchElement]
+public typealias Popular = [PopularElement]
+public typealias Trending = [TrendingElement]
+public typealias Search = [SearchElement]
 
 // MARK: - Encode/decode helpers
 
