@@ -1,3 +1,3 @@
 # Invidious-Swift
 
-A description of this package.
+This package is currently incomplete.
