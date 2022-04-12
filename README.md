@@ -46,3 +46,22 @@ You can simply follow the same structure!
 
 This applies to all endpoints available. Though, because of some issues, mixes from YouTube are not properly supported.
 
+Here's a swiftUI example
+
+```swift
+import Invidious_Swift
+import swiftui
+
+struct contentview: View {
+  @State var txt = "loading..."
+  var body: some View {
+    Text("Electroboom has \(txt) subs")
+      .task {
+        let electroboom = await inv.channel(udid: "Electroboom") // invidious supports channel names if they contain no spaces else use channel udid for this
+        txt = String(electroboom.subCount)
+      }
+  }
+}
+```
+
+ok very cool also i wrote this swiftui example on my phone can someone make a pr to fix any bugs with this lol
