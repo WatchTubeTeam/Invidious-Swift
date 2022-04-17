@@ -10,7 +10,16 @@ import Foundation
 public struct inv {
     // MARK: - Package stuff
     static public func setInstance(url: URL) async -> Bool {
-        return false
+        do {
+            let test = url.appendingPathComponent("api/v1/trending")
+            let (data, _) = try await URLSession.shared.data(from: test)
+            let trending = try? JSONDecoder().decode(Trending.self, from: data)
+            if trending == nil { return false }
+            UserDefaults.standard.set(test.absoluteString, forKey: "InvidiousInstanceURL")
+            return true
+        } catch {
+            return false
+        }
     }
     
     // MARK: - Endpoint - Stats
