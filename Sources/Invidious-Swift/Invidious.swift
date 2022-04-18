@@ -28,7 +28,7 @@ public struct inv {
     
     // MARK: - Endpoint - Stats
     /// Provides information about the current instance
-    /// - Returns: Returns instance data
+    /// - Returns: instance data
     static public func stats() async -> Stats! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
@@ -50,7 +50,7 @@ public struct inv {
     /// - Parameters:
     ///   - id: The ID of the video
     ///   - cc: Country code to use
-    /// - Returns: All of the
+    /// - Returns: All of the video data
     static public func video(id: String, cc: String? = nil) async -> Video! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
@@ -69,13 +69,13 @@ public struct inv {
     }
     
     // MARK: - Endpoint - Comments
-    /// <#Description#>
+    /// An extendable structure of comments of any given video
     /// - Parameters:
-    ///   - id: <#id description#>
-    ///   - continuation: <#continuation description#>
-    ///   - sortby: <#sortby description#>
-    ///   - source: <#source description#>
-    /// - Returns: <#description#>
+    ///   - id: ID of the video
+    ///   - continuation: A continuation string from a previous request to get the next set of comments
+    ///   - sortby: What to sort the comments by
+    ///   - source: Sources Reddit or YouTube comments
+    /// - Returns: A structure containing comments data
     static public func comments(id: String, continuation: String? = nil, sortby: SortByTypes? = nil, source: CommentSources? = nil) async -> Comments! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
@@ -105,9 +105,9 @@ public struct inv {
     }
     
     // MARK: - Endpoint - Captions
-    /// <#Description#>
-    /// - Parameter id: <#id description#>
-    /// - Returns: <#description#>
+    /// Provides captions data for any video
+    /// - Parameter id: ID of the video
+    /// - Returns: Available captions along with a helper extension to generate a subtitle set for you
     static public func captions(id: String) async -> Captions! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
@@ -125,11 +125,11 @@ public struct inv {
     }
     
     // MARK: - Endpoint - Trending
-    /// <#Description#>
+    /// Gets the latest trending data from YouTube
     /// - Parameters:
-    ///   - cc: <#cc description#>
-    ///   - type: <#type description#>
-    /// - Returns: <#description#>
+    ///   - cc: Country code to get data for different countries
+    ///   - type: Category of video types to get
+    /// - Returns: An array of trending videos
     static public func trending(cc: String? = nil, type: TrendingTypes? = .none) async -> Trending! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
@@ -156,8 +156,8 @@ public struct inv {
     }
     
     // MARK: - Endpoint - Popular
-    /// <#Description#>
-    /// - Returns: <#description#>
+    /// Returns popular videos from YouTube
+    /// - Returns: An array of popular  videos
     static public func popular() async -> Popular! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
@@ -176,11 +176,11 @@ public struct inv {
     }
     
     // MARK: - Endpoint - Channel
-    /// <#Description#>
+    /// Get a channel's data
     /// - Parameters:
-    ///   - udid: <#udid description#>
-    ///   - sortby: <#sortby description#>
-    /// - Returns: <#description#>
+    ///   - udid: UDID of the channel
+    ///   - sortby: What to sort the videos array by
+    /// - Returns: All of the channel's data along with a video array
     static public func channel(udid: String, sortby: ChannelSortByTypes? = .none) async -> Channel! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
@@ -205,12 +205,12 @@ public struct inv {
     }
     
     // MARK: - Endpoint - Channel videos
-    /// <#Description#>
+    /// Get the videos of a channel
     /// - Parameters:
-    ///   - udid: <#udid description#>
-    ///   - page: <#page description#>
-    ///   - sortby: <#sortby description#>
-    /// - Returns: <#description#>
+    ///   - udid: UDID of the channel
+    ///   - page: The page number
+    ///   - sortby: What to sort the videos by
+    /// - Returns: An array of the channel's videos
     static public func channelVideos(udid: String, page: Int = 1, sortby: ChannelSortByTypes? = .none) async -> Channel! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
@@ -236,12 +236,13 @@ public struct inv {
     }
     
     // MARK: - Endpoint - Search
-    /// <#Description#>
+    /// Searches YouTube for videos according to the query
     /// - Parameters:
-    ///   - q: <#q description#>
-    ///   - page: <#page description#>
-    /// - Returns: <#description#>
-    static public func search(q: String, page: Int = 1) async -> Search! {
+    ///   - q: The query
+    ///   - type: The type of content to filter out
+    ///   - page: The page number
+    /// - Returns: An array of different items, defined by the type property of the item
+    static public func search(q: String, type: SearchType = .video, page: Int = 1) async -> Search! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
             return nil
@@ -252,6 +253,7 @@ public struct inv {
             var mutableURL: URLComponents = URLComponents(string: url.absoluteString)!
             mutableURL.queryItems?.append(URLQueryItem(name: "q", value: q))
             mutableURL.queryItems?.append(URLQueryItem(name: "page", value: String(page)))
+            mutableURL.queryItems?.append(URLQueryItem(name: "type", value: type.rawValue))
             url = mutableURL.url!
             
             let (data, _) = try await URLSession.shared.data(from: url)
@@ -263,9 +265,9 @@ public struct inv {
     }
     
     // MARK: - Endpoint - Search Suggestions
-    /// <#Description#>
-    /// - Parameter q: <#q description#>
-    /// - Returns: <#description#>
+    /// Search suggestions for the query being typed
+    /// - Parameter q: The query
+    /// - Returns: An array of suggestions
     static public func searchSuggestions(q: String) async -> Suggestions! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
@@ -287,11 +289,11 @@ public struct inv {
     }
     
     // MARK: - Endpoint - Playlist
-    /// <#Description#>
+    /// Retrive data about a playlist
     /// - Parameters:
-    ///   - plid: <#plid description#>
-    ///   - page: <#page description#>
-    /// - Returns: <#description#>
+    ///   - plid: PLID of the playlist
+    ///   - page: The page number
+    /// - Returns: Data of the playlist and an array of videos
     static public func playlist(plid: String, page: Int) async -> Playlist! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
@@ -335,4 +337,10 @@ public enum ChannelSortByTypes: String {
     case newest = "newest"
     case oldest = "oldest"
     case popular = "popular"
+}
+public enum SearchType: String {
+    case video = "video"
+    case playlist = "playlist"
+    case channel = "channel"
+    case all = "all"
 }
