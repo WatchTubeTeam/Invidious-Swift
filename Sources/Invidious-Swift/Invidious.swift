@@ -7,8 +7,12 @@
 
 import Foundation
 
+/// Structure containing all API interaction functions and other utilities
 public struct inv {
     // MARK: - Package stuff
+    /// Package function to change the instance being used.
+    /// - Parameter url: A URL to the instance you wish to use
+    /// - Returns: Returns a boolean indicating if the instance was set sucessfully
     static public func setInstance(url: URL) async -> Bool {
         do {
             let test = url.appendingPathComponent("api/v1/trending")
@@ -23,6 +27,8 @@ public struct inv {
     }
     
     // MARK: - Endpoint - Stats
+    /// Provides information about the current instance
+    /// - Returns: Returns instance data
     static public func stats() async -> Stats! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
@@ -40,6 +46,11 @@ public struct inv {
     }
     
     // MARK: - Endpoint - Video
+    /// Retrieves data of any given video
+    /// - Parameters:
+    ///   - id: The ID of the video
+    ///   - cc: Country code to use
+    /// - Returns: All of the
     static public func video(id: String, cc: String? = nil) async -> Video! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
@@ -58,6 +69,13 @@ public struct inv {
     }
     
     // MARK: - Endpoint - Comments
+    /// <#Description#>
+    /// - Parameters:
+    ///   - id: <#id description#>
+    ///   - continuation: <#continuation description#>
+    ///   - sortby: <#sortby description#>
+    ///   - source: <#source description#>
+    /// - Returns: <#description#>
     static public func comments(id: String, continuation: String? = nil, sortby: SortByTypes? = nil, source: CommentSources? = nil) async -> Comments! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
@@ -87,6 +105,9 @@ public struct inv {
     }
     
     // MARK: - Endpoint - Captions
+    /// <#Description#>
+    /// - Parameter id: <#id description#>
+    /// - Returns: <#description#>
     static public func captions(id: String) async -> Captions! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
@@ -103,9 +124,12 @@ public struct inv {
         }
     }
     
-    
-    
     // MARK: - Endpoint - Trending
+    /// <#Description#>
+    /// - Parameters:
+    ///   - cc: <#cc description#>
+    ///   - type: <#type description#>
+    /// - Returns: <#description#>
     static public func trending(cc: String? = nil, type: TrendingTypes? = .none) async -> Trending! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
@@ -132,6 +156,8 @@ public struct inv {
     }
     
     // MARK: - Endpoint - Popular
+    /// <#Description#>
+    /// - Returns: <#description#>
     static public func popular() async -> Popular! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
@@ -150,6 +176,11 @@ public struct inv {
     }
     
     // MARK: - Endpoint - Channel
+    /// <#Description#>
+    /// - Parameters:
+    ///   - udid: <#udid description#>
+    ///   - sortby: <#sortby description#>
+    /// - Returns: <#description#>
     static public func channel(udid: String, sortby: ChannelSortByTypes? = .none) async -> Channel! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
@@ -174,6 +205,12 @@ public struct inv {
     }
     
     // MARK: - Endpoint - Channel videos
+    /// <#Description#>
+    /// - Parameters:
+    ///   - udid: <#udid description#>
+    ///   - page: <#page description#>
+    ///   - sortby: <#sortby description#>
+    /// - Returns: <#description#>
     static public func channelVideos(udid: String, page: Int = 1, sortby: ChannelSortByTypes? = .none) async -> Channel! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
@@ -199,6 +236,11 @@ public struct inv {
     }
     
     // MARK: - Endpoint - Search
+    /// <#Description#>
+    /// - Parameters:
+    ///   - q: <#q description#>
+    ///   - page: <#page description#>
+    /// - Returns: <#description#>
     static public func search(q: String, page: Int = 1) async -> Search! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
@@ -221,6 +263,9 @@ public struct inv {
     }
     
     // MARK: - Endpoint - Search Suggestions
+    /// <#Description#>
+    /// - Parameter q: <#q description#>
+    /// - Returns: <#description#>
     static public func searchSuggestions(q: String) async -> Suggestions! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
@@ -242,6 +287,11 @@ public struct inv {
     }
     
     // MARK: - Endpoint - Playlist
+    /// <#Description#>
+    /// - Parameters:
+    ///   - plid: <#plid description#>
+    ///   - page: <#page description#>
+    /// - Returns: <#description#>
     static public func playlist(plid: String, page: Int) async -> Playlist! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {

@@ -41,5 +41,7 @@ final class Invidious_SwiftTests: XCTestCase {
         } else {
             print("[InvTesting] Test succeeded (\(check)/\(total))")
         }
+        
+        inv.set
     }
 }
