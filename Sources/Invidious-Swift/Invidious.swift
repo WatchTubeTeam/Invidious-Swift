@@ -19,7 +19,7 @@ public struct inv {
             let (data, _) = try await URLSession.shared.data(from: test)
             let trending = try? JSONDecoder().decode(Trending.self, from: data)
             if trending == nil { return false }
-            UserDefaults.standard.set(test.absoluteString, forKey: "InvidiousInstanceURL")
+            UserDefaults.standard.set(url.absoluteString, forKey: "InvidiousInstanceURL")
             return true
         } catch {
             return false
