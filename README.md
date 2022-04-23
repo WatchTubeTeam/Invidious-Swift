@@ -52,15 +52,20 @@ Here's a swiftUI example
 import Invidious_Swift
 import SwiftUI
 
-struct contentview: View {
-  @State var txt = "loading..."
-  var body: some View {
-    Text("Electroboom has \(txt) subs")
-      .task {
-        let electroboom = await inv.channel(udid: "UCJ0-OtVpF0wOKEqT2Z1HEtA")
-        txt = String(electroboom.subCount)
-      }
-  }
+struct ContentView: View {
+    @State var txt: String! = nil // set it to nil as a start value, this will be used to check if its done loading the sub count
+    var body: some View {
+        if txt == nil { // if nil, nothing is loaded
+            ProgressView()
+                .progressViewStyle(.circular)
+                .task { // start loading electroboom's channel
+                    let electroboom = await inv.channel(udid: "UCJ0-OtVpF0wOKEqT2Z1HEtA") // this is electroboom's udid
+                    txt = String(electroboom?.subCount ?? 0) // if any issue occurs, the electroboom variable will be nil. all endpoints will return nil if issues occur.
+                }
+        } else { // is not nil, show it
+            Text("Electroboom has \(txt) subs!")
+        }
+    }
 }
 ```
 
