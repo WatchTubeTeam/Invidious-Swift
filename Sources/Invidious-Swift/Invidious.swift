@@ -251,9 +251,11 @@ public struct inv {
         do {
             var url = instance.appendingPathComponent("api/v1/search")
             var mutableURL: URLComponents = URLComponents(string: url.absoluteString)!
-            mutableURL.queryItems?.append(URLQueryItem(name: "q", value: q))
-            mutableURL.queryItems?.append(URLQueryItem(name: "page", value: String(page)))
-            mutableURL.queryItems?.append(URLQueryItem(name: "type", value: type.rawValue))
+            var queryitems = [URLQueryItem]()
+            queryitems.append(URLQueryItem(name: "q", value: q))
+            queryitems.append(URLQueryItem(name: "page", value: String(page)))
+            queryitems.append(URLQueryItem(name: "type", value: type.rawValue))
+            mutableURL.queryItems = queryitems
             url = mutableURL.url!
             
             let (data, _) = try await URLSession.shared.data(from: url)
