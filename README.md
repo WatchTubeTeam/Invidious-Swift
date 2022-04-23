@@ -50,7 +50,7 @@ Here's a swiftUI example
 
 ```swift
 import Invidious_Swift
-import swiftui
+import SwiftUI
 
 struct contentview: View {
   @State var txt = "loading..."
