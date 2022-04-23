@@ -23,7 +23,7 @@ struct SubtitleSet {
     var subtitles: [Subtitle]
 }
 
-extension VideoCaption {
+extension InvVideoCaption {
     func downloadURL() -> URL! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
@@ -102,7 +102,7 @@ extension VideoCaption {
         }
     }
 }
-extension CaptionsCaption {
+extension InvCaption {
     func downloadURL() -> URL! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {

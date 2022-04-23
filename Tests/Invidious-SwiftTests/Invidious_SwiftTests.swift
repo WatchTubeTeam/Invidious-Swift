@@ -27,7 +27,7 @@ final class Invidious_SwiftTests: XCTestCase {
         } else {
             issues.append("captions")
         }
-        if (await inv.channel(udid: "UCJ0-OtVpF0wOKEqT2Z1HEtA").author == "ElectroBOOM") {
+        if (await inv.channel(udid: "UCeEf90AEmmxaQs5BUkHqR3Q").author == "mitxela") {
             check += 1
         } else {
             issues.append("channel")

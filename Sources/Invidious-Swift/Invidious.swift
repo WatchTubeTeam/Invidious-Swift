@@ -17,7 +17,7 @@ public struct inv {
         do {
             let test = url.appendingPathComponent("api/v1/trending")
             let (data, _) = try await URLSession.shared.data(from: test)
-            let trending = try? JSONDecoder().decode(Trending.self, from: data)
+            let trending = try? JSONDecoder().decode(InvTrending.self, from: data)
             if trending == nil { return false }
             UserDefaults.standard.set(url.absoluteString, forKey: "InvidiousInstanceURL")
             return true
@@ -29,7 +29,7 @@ public struct inv {
     // MARK: - Endpoint - Stats
     /// Provides information about the current instance
     /// - Returns: instance data
-    static public func stats() async -> Stats! {
+    static public func stats() async -> InvStats! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
             return nil
@@ -37,7 +37,7 @@ public struct inv {
         
         do {
             let (data, _) = try await URLSession.shared.data(from: instance.appendingPathComponent("api/v1/stats"))
-            let stats = try? JSONDecoder().decode(Stats.self, from: data)
+            let stats = try? JSONDecoder().decode(InvStats.self, from: data)
             return stats
             
         } catch {
@@ -51,7 +51,7 @@ public struct inv {
     ///   - id: The ID of the video
     ///   - cc: Country code to use
     /// - Returns: All of the video data
-    static public func video(id: String, cc: String? = nil) async -> Video! {
+    static public func video(id: String, cc: String? = nil) async -> InvVideo! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
             return nil
@@ -60,7 +60,7 @@ public struct inv {
             let url: URL = instance.appendingPathComponent(cc == nil ? "api/v1/videos/\(id)" : "api/v1/videos/\(id)?cc=\(cc ?? "us")")
             
             let (data, _) = try await URLSession.shared.data(from: url)
-            let video = try? JSONDecoder().decode(Video.self, from: data)
+            let video = try? JSONDecoder().decode(InvVideo.self, from: data)
 
             return video
         } catch {
@@ -76,7 +76,7 @@ public struct inv {
     ///   - sortby: What to sort the comments by
     ///   - source: Sources Reddit or YouTube comments
     /// - Returns: A structure containing comments data
-    static public func comments(id: String, continuation: String? = nil, sortby: SortByTypes? = nil, source: CommentSources? = nil) async -> Comments! {
+    static public func comments(id: String, continuation: String? = nil, sortby: SortByTypes? = nil, source: CommentSources? = nil) async -> InvComments! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
             return nil
@@ -97,7 +97,7 @@ public struct inv {
             url = mutableURL.url!
             
             let (data, _) = try await URLSession.shared.data(from: url)
-            let comments = try? JSONDecoder().decode(Comments.self, from: data)
+            let comments = try? JSONDecoder().decode(InvComments.self, from: data)
             return comments
         } catch {
             return nil
@@ -108,7 +108,7 @@ public struct inv {
     /// Provides captions data for any video
     /// - Parameter id: ID of the video
     /// - Returns: Available captions along with a helper extension to generate a subtitle set for you
-    static public func captions(id: String) async -> Captions! {
+    static public func captions(id: String) async -> InvCaptions! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
             return nil
@@ -117,7 +117,7 @@ public struct inv {
         do {
             let url = instance.appendingPathComponent("api/v1/captions/\(id)")
             let (data, _) = try await URLSession.shared.data(from: url)
-            let captions = try? JSONDecoder().decode(Captions.self, from: data)
+            let captions = try? JSONDecoder().decode(InvCaptions.self, from: data)
             return captions
         } catch {
             return nil
@@ -130,7 +130,7 @@ public struct inv {
     ///   - cc: Country code to get data for different countries
     ///   - type: Category of video types to get
     /// - Returns: An array of trending videos
-    static public func trending(cc: String? = nil, type: TrendingTypes? = .none) async -> Trending! {
+    static public func trending(cc: String? = nil, type: TrendingTypes? = .none) async -> InvTrending! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
             return nil
@@ -148,7 +148,7 @@ public struct inv {
             url = mutableURL.url!
             
             let (data, _) = try await URLSession.shared.data(from: url)
-            let trending = try? JSONDecoder().decode(Trending.self, from: data)
+            let trending = try? JSONDecoder().decode(InvTrending.self, from: data)
             return trending
         } catch {
             return nil
@@ -158,7 +158,7 @@ public struct inv {
     // MARK: - Endpoint - Popular
     /// Returns popular videos from YouTube
     /// - Returns: An array of popular  videos
-    static public func popular() async -> Popular! {
+    static public func popular() async -> InvPopular! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
             return nil
@@ -168,7 +168,7 @@ public struct inv {
             let url = instance.appendingPathComponent("api/v1/popular")
             
             let (data, _) = try await URLSession.shared.data(from: url)
-            let popular = try? JSONDecoder().decode(Popular.self, from: data)
+            let popular = try? JSONDecoder().decode(InvPopular.self, from: data)
             return popular
         } catch {
             return nil
@@ -181,7 +181,7 @@ public struct inv {
     ///   - udid: UDID of the channel
     ///   - sortby: What to sort the videos array by
     /// - Returns: All of the channel's data along with a video array
-    static public func channel(udid: String, sortby: ChannelSortByTypes? = .none) async -> Channel! {
+    static public func channel(udid: String, sortby: ChannelSortByTypes? = .none) async -> InvChannel! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
             return nil
@@ -197,7 +197,7 @@ public struct inv {
             url = mutableURL.url!
             
             let (data, _) = try await URLSession.shared.data(from: url)
-            let channel = try? JSONDecoder().decode(Channel.self, from: data)
+            let channel = try? JSONDecoder().decode(InvChannel.self, from: data)
             return channel
         } catch {
             return nil
@@ -211,7 +211,7 @@ public struct inv {
     ///   - page: The page number
     ///   - sortby: What to sort the videos by
     /// - Returns: An array of the channel's videos
-    static public func channelVideos(udid: String, page: Int = 1, sortby: ChannelSortByTypes? = .none) async -> Channel! {
+    static public func channelVideos(udid: String, page: Int = 1, sortby: ChannelSortByTypes? = .none) async -> InvChannel! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
             return nil
@@ -228,7 +228,7 @@ public struct inv {
             url = mutableURL.url!
             
             let (data, _) = try await URLSession.shared.data(from: url)
-            let channel = try? JSONDecoder().decode(Channel.self, from: data)
+            let channel = try? JSONDecoder().decode(InvChannel.self, from: data)
             return channel
         } catch {
             return nil
@@ -242,7 +242,7 @@ public struct inv {
     ///   - type: The type of content to filter out
     ///   - page: The page number
     /// - Returns: An array of different items, defined by the type property of the item
-    static public func search(q: String, type: SearchType = .video, page: Int = 1) async -> Search! {
+    static public func search(q: String, type: SearchType = .video, page: Int = 1) async -> InvSearch! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
             return nil
@@ -257,7 +257,7 @@ public struct inv {
             url = mutableURL.url!
             
             let (data, _) = try await URLSession.shared.data(from: url)
-            let search = try? JSONDecoder().decode(Search.self, from: data)
+            let search = try? JSONDecoder().decode(InvSearch.self, from: data)
             return search
         } catch {
             return nil
@@ -268,7 +268,7 @@ public struct inv {
     /// Search suggestions for the query being typed
     /// - Parameter q: The query
     /// - Returns: An array of suggestions
-    static public func searchSuggestions(q: String) async -> Suggestions! {
+    static public func searchSuggestions(q: String) async -> InvSearchSuggestions! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
             return nil
@@ -281,7 +281,7 @@ public struct inv {
             url = mutableURL.url!
             
             let (data, _) = try await URLSession.shared.data(from: url)
-            let suggest = try? JSONDecoder().decode(Suggestions.self, from: data)
+            let suggest = try? JSONDecoder().decode(InvSearchSuggestions.self, from: data)
             return suggest
         } catch {
             return nil
@@ -294,7 +294,7 @@ public struct inv {
     ///   - plid: PLID of the playlist
     ///   - page: The page number
     /// - Returns: Data of the playlist and an array of videos
-    static public func playlist(plid: String, page: Int) async -> Playlist! {
+    static public func playlist(plid: String, page: Int) async -> InvPlaylist! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
             return nil
@@ -307,7 +307,7 @@ public struct inv {
             url = mutableURL.url!
             
             let (data, _) = try await URLSession.shared.data(from: url)
-            let playlist = try? JSONDecoder().decode(Playlist.self, from: data)
+            let playlist = try? JSONDecoder().decode(InvPlaylist.self, from: data)
             return playlist
         } catch {
             return nil
