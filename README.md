@@ -57,7 +57,7 @@ struct contentview: View {
   var body: some View {
     Text("Electroboom has \(txt) subs")
       .task {
-        let electroboom = await inv.channel(udid: "Electroboom") // invidious supports channel names if they contain no spaces else use channel udid for this
+        let electroboom = await inv.channel(udid: "UCJ0-OtVpF0wOKEqT2Z1HEtA")
         txt = String(electroboom.subCount)
       }
   }
