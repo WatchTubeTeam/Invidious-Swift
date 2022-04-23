@@ -65,3 +65,5 @@ struct contentview: View {
 ```
 
 ok very cool also i wrote this swiftui example on my phone can someone make a pr to fix any bugs with this lol
+
+> Not everything available from Invidious is implemented, please tell us if you need anything through opening an issue or add it yourself by opening a PR!
