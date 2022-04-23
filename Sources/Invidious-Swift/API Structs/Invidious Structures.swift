@@ -83,12 +83,12 @@ public enum InvVideoThumbnailQuality: String, Codable {
 
 // MARK: - InvChannelPlaylists
 public struct InvChannelPlaylists: Codable {
-    public let playlists: [InvPlaylistElement]
+    public let playlists: [InvChannelPlaylistVideo]
     public let continuation: String?
 }
 
 // MARK: - InvPlaylistElement
-public struct InvPlaylistElement: Codable {
+public struct InvChannelPlaylistVideo: Codable {
     public let type: String
     public let title, playlistID: String
     public let playlistThumbnail: String
@@ -136,8 +136,8 @@ public struct InvChannelVideoElement: Codable {
 }
 
 // MARK: - InvPopularElement
-public struct InvPopularElement: Codable {
-    public let type: InvPopularType
+public struct InvPopularVideo: Codable {
+    public let type: String
     public let title, videoID: String
     public let videoThumbnails: [InvVideoThumbnail]
     public let lengthSeconds: Int
@@ -156,12 +156,8 @@ public struct InvPopularElement: Codable {
     }
 }
 
-public enum InvPopularType: String, Codable {
-    case shortVideo = "shortVideo"
-}
-
 // MARK: - InvTrendingElement
-public struct InvTrendingElement: Codable {
+public struct InvTrendingVideo: Codable {
     public let type: String
     public let title, videoID, author, authorID: String
     public let authorURL: String
@@ -486,8 +482,8 @@ public struct InvSearchVideo: Codable {
 }
 
 public typealias InvChannelVideos = [InvChannelVideoElement]
-public typealias InvPopular = [InvPopularElement]
-public typealias InvTrending = [InvTrendingElement]
+public typealias InvPopular = [InvPopularVideo]
+public typealias InvTrending = [InvTrendingVideo]
 public typealias InvSearch = [InvSearchElement]
 
 // MARK: - Encode/decode helpers

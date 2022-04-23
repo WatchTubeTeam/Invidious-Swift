@@ -8,19 +8,36 @@
 import Foundation
 
 /// Structure containing all API interaction functions and other utilities
+/// > Every exposed endpoint here returns an optional. If any issues of any type occur, you will receive `nil`
 public struct inv {
     // MARK: - Package stuff
     /// Package function to change the instance being used.
+    /// # Usage
+    /// ```swift
+    ///
+    /// await inv.setInstance(url: URL(string: "https://invidious.osi.kr")!)
+    /// // This function will return a Bool depending on the selftest result
+    /// // If you receive false, the instance was not set as the selftest failed
+    ///
+    /// // You may skip the check like this
+    /// await inv.setInstance(url: URL(string: "https://invidious.osi.kr")!, skipCheck: true)
+    ///
+    /// ```
     /// - Parameter url: A URL to the instance you wish to use
     /// - Returns: Returns a boolean indicating if the instance was set sucessfully
-    static public func setInstance(url: URL) async -> Bool {
+    static public func setInstance(url: URL, skipCheck: Bool = false) async -> Bool {
         do {
-            let test = url.appendingPathComponent("api/v1/trending")
-            let (data, _) = try await URLSession.shared.data(from: test)
-            let trending = try? JSONDecoder().decode(InvTrending.self, from: data)
-            if trending == nil { return false }
-            UserDefaults.standard.set(url.absoluteString, forKey: "InvidiousInstanceURL")
-            return true
+            if skipCheck {
+                UserDefaults.standard.set(url.absoluteString, forKey: "InvidiousInstanceURL")
+                return true
+            } else {
+                let test = url.appendingPathComponent("api/v1/trending")
+                let (data, _) = try await URLSession.shared.data(from: test)
+                let trending = try? JSONDecoder().decode(InvTrending.self, from: data)
+                if trending == nil { return false }
+                UserDefaults.standard.set(url.absoluteString, forKey: "InvidiousInstanceURL")
+                return true
+            }
         } catch {
             return false
         }
@@ -28,6 +45,13 @@ public struct inv {
     
     // MARK: - Endpoint - Stats
     /// Provides information about the current instance
+    /// # Usage
+    /// ```
+    ///
+    /// let stats = await inv.stats()
+    /// print(stats.version)
+    ///
+    /// ```
     /// - Returns: instance data
     static public func stats() async -> InvStats! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
@@ -47,6 +71,12 @@ public struct inv {
     
     // MARK: - Endpoint - Video
     /// Retrieves data of any given video
+    /// # Usage
+    /// ```
+    ///
+    /// let video = await inv.video("
+    ///
+    /// ```
     /// - Parameters:
     ///   - id: The ID of the video
     ///   - cc: Country code to use

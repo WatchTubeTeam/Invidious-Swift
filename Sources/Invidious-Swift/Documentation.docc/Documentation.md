@@ -1,7 +1,10 @@
-# Invidious-Swift
-## An API wrapper for Invidous
+# ``Invidious_Swift``
 
-Very cool, will be used in WatchTube's SwiftUI rewrite (not done yet as of writing).
+An API wrapper for Invidious instances
+
+## Overview
+
+> This is taken from the [GitHub repo](https://github.com/WatchTubeTeam/Invidious-Swift)
 
 This package uses the new async/await and concurrency stuff, so you will need iOS 15, macOS 12 or watchOS 8 or something like that
 
@@ -70,3 +73,8 @@ struct ContentView: View {
 ```
 
 > Not everything available from Invidious is implemented, please tell us if you need anything through opening an issue or add it yourself by opening a PR!
+## Topics
+
+### Getting Started
+
+- ``inv``
