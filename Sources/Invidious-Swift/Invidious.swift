@@ -85,15 +85,17 @@ public struct inv {
         do {
             var url = instance.appendingPathComponent("api/v1/comments/\(id)")
             var mutableURL: URLComponents = URLComponents(string: url.absoluteString)!
+            var queryitems = [URLQueryItem]()
             if (continuation != nil) {
-                mutableURL.queryItems?.append(URLQueryItem(name: "continuation", value: continuation))
+                queryitems.append(URLQueryItem(name: "continuation", value: continuation))
             }
             if (sortby != nil) {
-                mutableURL.queryItems?.append(URLQueryItem(name: "sort_by", value: sortby?.rawValue))
+                queryitems.append(URLQueryItem(name: "sort_by", value: sortby?.rawValue))
             }
             if (source != nil) {
-                mutableURL.queryItems?.append(URLQueryItem(name: "source", value: source?.rawValue))
+                queryitems.append(URLQueryItem(name: "source", value: source?.rawValue))
             }
+            mutableURL.queryItems = queryitems
             url = mutableURL.url!
             
             let (data, _) = try await URLSession.shared.data(from: url)
@@ -139,12 +141,14 @@ public struct inv {
         do {
             var url = instance.appendingPathComponent("api/v1/trending")
             var mutableURL: URLComponents = URLComponents(string: url.absoluteString)!
+            var queryitems = [URLQueryItem]()
             if (cc != nil) {
-                mutableURL.queryItems?.append(URLQueryItem(name: "cc", value: cc))
+                queryitems.append(URLQueryItem(name: "cc", value: cc))
             }
             if (type != nil) {
-                mutableURL.queryItems?.append(URLQueryItem(name: "type", value: type?.rawValue))
+                queryitems.append(URLQueryItem(name: "type", value: type?.rawValue))
             }
+            mutableURL.queryItems = queryitems
             url = mutableURL.url!
             
             let (data, _) = try await URLSession.shared.data(from: url)
@@ -192,7 +196,7 @@ public struct inv {
             var mutableURL: URLComponents = URLComponents(string: url.absoluteString)!
             
             if (sortby != nil) {
-                mutableURL.queryItems?.append(URLQueryItem(name: "sort_by", value: sortby?.rawValue))
+                mutableURL.queryItems = [URLQueryItem(name: "sort_by", value: sortby?.rawValue)]
             }
             url = mutableURL.url!
             
@@ -220,11 +224,12 @@ public struct inv {
         do {
             var url = instance.appendingPathComponent("api/v1/channels/videos/\(udid)")
             var mutableURL: URLComponents = URLComponents(string: url.absoluteString)!
-            
+            var queryitems = [URLQueryItem]()
             if (sortby != nil) {
-                mutableURL.queryItems?.append(URLQueryItem(name: "sort_by", value: sortby?.rawValue))
+                queryitems.append(URLQueryItem(name: "sort_by", value: sortby?.rawValue))
             }
-            mutableURL.queryItems?.append(URLQueryItem(name: "page", value: String(page)))
+            queryitems.append(URLQueryItem(name: "page", value: String(page)))
+            mutableURL.queryItems = queryitems
             url = mutableURL.url!
             
             let (data, _) = try await URLSession.shared.data(from: url)
@@ -279,7 +284,7 @@ public struct inv {
         do {
             var url = instance.appendingPathComponent("api/v1/search/suggestions")
             var mutableURL: URLComponents = URLComponents(string: url.absoluteString)!
-            mutableURL.queryItems?.append(URLQueryItem(name: "q", value: q))
+            mutableURL.queryItems = [URLQueryItem(name: "q", value: q)]
             url = mutableURL.url!
             
             let (data, _) = try await URLSession.shared.data(from: url)
@@ -296,7 +301,7 @@ public struct inv {
     ///   - plid: PLID of the playlist
     ///   - page: The page number
     /// - Returns: Data of the playlist and an array of videos
-    static public func playlist(plid: String, page: Int) async -> InvPlaylist! {
+    static public func playlist(plid: String, page: Int = 1) async -> InvPlaylist! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
             return nil
@@ -305,7 +310,7 @@ public struct inv {
         do {
             var url = instance.appendingPathComponent("api/v1/playlists/\(plid)")
             var mutableURL: URLComponents = URLComponents(string: url.absoluteString)!
-            mutableURL.queryItems?.append(URLQueryItem(name: "page", value: String(page)))
+            mutableURL.queryItems = [URLQueryItem(name: "page", value: String(page))]
             url = mutableURL.url!
             
             let (data, _) = try await URLSession.shared.data(from: url)
