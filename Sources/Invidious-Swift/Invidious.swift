@@ -49,7 +49,7 @@ public struct inv {
     /// ```
     ///
     /// let stats = await inv.stats()
-    /// print(stats.version)
+    /// print(stats?.version) // Prints "2.0" (at time of writing)
     ///
     /// ```
     /// - Returns: instance data
@@ -74,7 +74,8 @@ public struct inv {
     /// # Usage
     /// ```
     ///
-    /// let video = await inv.video("
+    /// let video = await inv.video("o5RhbG3tOT8")
+    /// print(video?.title) // Prints "The Raid - Animation vs. Minecraft Shorts Ep. 28"
     ///
     /// ```
     /// - Parameters:
