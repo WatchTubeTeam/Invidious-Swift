@@ -12,15 +12,15 @@ import Foundation
 // https://github.com/WatchTubeTeam/WatchTube/blob/a217908c1674e3f0df68258affb1739aea29a2ca/WatchTube%20WatchKit%20Extension/Scenes/Players/HLS%20Player/playerView.swift#L13
 
 public struct Caption {
-    var text: String
-    var beginning: Double
-    var end: Double
+    public var text: String
+    public var beginning: Double
+    public var end: Double
 }
 
 public struct CaptionSet {
-    var lang: String
-    var label: String
-    var captions: [Caption]
+    public var lang: String
+    public var label: String
+    public var captions: [Caption]
 }
 
 public extension InvVideoCaption {
@@ -93,7 +93,7 @@ public extension InvVideoCaption {
                 let finalSub = Caption.init(text: subtext, beginning: beginning, end: end)
                 array.append(finalSub)
             }
-            let finalised = CaptionSet(lang: language, label: label, subtitles: array)
+            let finalised = CaptionSet(lang: language, label: label, captions: array)
 
             return finalised
             
@@ -172,7 +172,7 @@ public extension InvCaption {
                 let finalSub = Caption.init(text: subtext, beginning: beginning, end: end)
                 array.append(finalSub)
             }
-            let finalised = CaptionSet(lang: language, label: label, subtitles: array)
+            let finalised = CaptionSet(lang: language, label: label, captions: array)
             
             return finalised
             
