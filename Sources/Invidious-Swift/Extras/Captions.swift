@@ -20,7 +20,7 @@ public struct Caption {
 public struct CaptionSet {
     var lang: String
     var label: String
-    var subtitles: [Subtitle]
+    var captions: [Caption]
 }
 
 public extension InvVideoCaption {
@@ -36,7 +36,7 @@ public extension InvVideoCaption {
     }
     
     
-    func createCaptions() async -> SubtitleSet! {
+    func createCaptions() async -> CaptionSet! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
             return nil
@@ -66,7 +66,7 @@ public extension InvVideoCaption {
             let meta = String(describing: subtitlesData[0])
             let language:String = meta.description.components(separatedBy: "\n")[2].components(separatedBy: ": ")[1].description
             
-            var array: [Subtitle] = []
+            var array: [Caption] = []
             subtitlesData = subtitlesData.suffix(subtitlesData.count - 1)
 
             for subtitleItem in subtitlesData {
@@ -90,10 +90,10 @@ public extension InvVideoCaption {
                 total = total + (Double(broken[1]) ?? 0) * 60 // same as above but for minutes
                 total = total + (Double(broken[2]) ?? 0) // already in seconds and in decimal too.
                 let end: Double = total
-                let finalSub = Subtitle.init(text: subtext, beginning: beginning, end: end)
+                let finalSub = Caption.init(text: subtext, beginning: beginning, end: end)
                 array.append(finalSub)
             }
-            let finalised = SubtitleSet(lang: language, label: label, subtitles: array)
+            let finalised = CaptionSet(lang: language, label: label, subtitles: array)
 
             return finalised
             
@@ -115,7 +115,7 @@ public extension InvCaption {
     }
     
     
-    func createCaptions() async -> SubtitleSet! {
+    func createCaptions() async -> CaptionSet! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
             return nil
@@ -145,7 +145,7 @@ public extension InvCaption {
             let meta = String(describing: subtitlesData[0])
             let language:String = meta.description.components(separatedBy: "\n")[2].components(separatedBy: ": ")[1].description
             
-            var array: [Subtitle] = []
+            var array: [Caption] = []
             subtitlesData = subtitlesData.suffix(subtitlesData.count - 1)
 
             for subtitleItem in subtitlesData {
@@ -169,10 +169,10 @@ public extension InvCaption {
                 total = total + (Double(broken[1]) ?? 0) * 60 // same as above but for minutes
                 total = total + (Double(broken[2]) ?? 0) // already in seconds and in decimal too.
                 let end: Double = total
-                let finalSub = Subtitle.init(text: subtext, beginning: beginning, end: end)
+                let finalSub = Caption.init(text: subtext, beginning: beginning, end: end)
                 array.append(finalSub)
             }
-            let finalised = SubtitleSet(lang: language, label: label, subtitles: array)
+            let finalised = CaptionSet(lang: language, label: label, subtitles: array)
             
             return finalised
             
