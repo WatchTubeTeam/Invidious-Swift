@@ -11,19 +11,19 @@ import Foundation
 // some stuff comes from here
 // https://github.com/WatchTubeTeam/WatchTube/blob/a217908c1674e3f0df68258affb1739aea29a2ca/WatchTube%20WatchKit%20Extension/Scenes/Players/HLS%20Player/playerView.swift#L13
 
-struct Subtitle {
+public struct Caption {
     var text: String
     var beginning: Double
     var end: Double
 }
 
-struct SubtitleSet {
+public struct CaptionSet {
     var lang: String
     var label: String
     var subtitles: [Subtitle]
 }
 
-extension InvVideoCaption {
+public extension InvVideoCaption {
     func downloadURL() -> URL! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
@@ -102,7 +102,7 @@ extension InvVideoCaption {
         }
     }
 }
-extension InvCaption {
+public extension InvCaption {
     func downloadURL() -> URL! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
