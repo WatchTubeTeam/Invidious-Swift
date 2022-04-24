@@ -12,12 +12,24 @@ import Foundation
 // https://github.com/WatchTubeTeam/WatchTube/blob/a217908c1674e3f0df68258affb1739aea29a2ca/WatchTube%20WatchKit%20Extension/Scenes/Players/HLS%20Player/playerView.swift#L13
 
 public struct Caption {
+    public init(text: String, beginning: Double, end: Double) {
+        self.text = text
+        self.beginning = beginning
+        self.end = end
+    }
+    
     public var text: String
     public var beginning: Double
     public var end: Double
 }
 
 public struct CaptionSet {
+    public init(lang: String, label: String, captions: [Caption]) {
+        self.captions = captions
+        self.label = label
+        self.lang = lang
+    }
+    
     public var lang: String
     public var label: String
     public var captions: [Caption]
