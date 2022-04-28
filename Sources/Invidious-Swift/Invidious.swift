@@ -246,7 +246,7 @@ public struct inv {
     ///   - page: The page number
     ///   - sortby: What to sort the videos by
     /// - Returns: An array of the channel's videos
-    static public func channelVideos(udid: String, page: Int = 1, sortby: ChannelSortByTypes? = .none) async -> InvChannel! {
+    static public func channelVideos(udid: String, page: Int = 1, sortby: ChannelSortByTypes? = .none) async -> InvChannelVideos! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
             return nil
@@ -264,7 +264,7 @@ public struct inv {
             url = mutableURL.url!
             
             let (data, _) = try await URLSession.shared.data(from: url)
-            let channel = try? JSONDecoder().decode(InvChannel.self, from: data)
+            let channel = try? JSONDecoder().decode(InvChannelVideos.self, from: data)
             return channel
         } catch {
             return nil
