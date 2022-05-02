@@ -32,6 +32,7 @@ final class Invidious_SwiftTests: XCTestCase {
         } else {
             issues.append("channel")
         }
+        print(await inv.comments(id: "WosblHoWh1g", continuation: "EkMSC1dvc2JsSG9XaDFnyAEA4AEBogINKP___________wFAAMICHQgEGhdodHRwczovL3d3dy55b3V0dWJlLmNvbSIAGAYyfhpLEhpVZ3c3cE5fMFEyelV0b0pCR1J4NEFhQUJBZyICCAAqGFVDUjlHY3EwQ01tNllnVHpzRHhBeGpPUTILV29zYmxIb1doMWdAAUgKQi9jb21tZW50LXJlcGxpZXMtaXRlbS1VZ3c3cE5fMFEyelV0b0pCR1J4NEFhQUJBZw%3D%3D"))
         
         //MARK: - Verify
         let total = 5

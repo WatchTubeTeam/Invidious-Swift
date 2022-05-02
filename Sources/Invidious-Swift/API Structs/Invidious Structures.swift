@@ -9,12 +9,14 @@
 import Foundation
 
 // MARK: - InvSearchSuggestions
+/// Contains original query and suggestions for it
 public struct InvSearchSuggestions: Codable {
     public let query: String
     public let suggestions: [String]
 }
 
 // MARK: - InvPlaylist
+/// Playlist data and it's list of videos
 public struct InvPlaylist: Codable {
     public let type: String
     public let title, playlistID: String
@@ -46,6 +48,7 @@ public struct InvAuthorMedia: Codable {
 }
 
 // MARK: - InvPlaylistVideo
+/// Basic data of a video in a playlist
 public struct InvPlaylistVideo: Codable {
     public let title, videoID, author, authorID: String
     public let authorURL: String
@@ -82,12 +85,14 @@ public enum InvVideoThumbnailQuality: String, Codable {
 }
 
 // MARK: - InvChannelPlaylists
+/// A channel's playlists
 public struct InvChannelPlaylists: Codable {
     public let playlists: [InvChannelPlaylistVideo]
     public let continuation: String?
 }
 
 // MARK: - InvPlaylistElement
+/// Playlist from a channel
 public struct InvChannelPlaylistVideo: Codable {
     public let type: String
     public let title, playlistID: String
@@ -109,6 +114,7 @@ public struct InvChannelPlaylistVideo: Codable {
 }
 
 // MARK: - InvChannelVideoElement
+/// A channel's video
 public struct InvChannelVideo: Codable {
     public let type: String
     public let title, videoID: String
@@ -136,7 +142,7 @@ public struct InvChannelVideo: Codable {
     }
 }
 
-// MARK: - InvPopularElement
+// MARK: - InvPopularVideo
 public struct InvPopularVideo: Codable {
     public let type: String
     public let title, videoID: String
@@ -157,7 +163,7 @@ public struct InvPopularVideo: Codable {
     }
 }
 
-// MARK: - InvTrendingElement
+// MARK: - InvTrendingVideo
 public struct InvTrendingVideo: Codable {
     public let type: String
     public let title, videoID, author, authorID: String
@@ -188,14 +194,14 @@ public struct InvCaptions: Codable {
     public let captions: [InvCaption]
 }
 
-// MARK: - InvCaptionsCaption
+// MARK: - InvCaption
 public struct InvCaption: Codable {
     public let label, languageCode, url: String
 }
 
 // MARK: - InvComments
 public struct InvComments: Codable {
-    public let commentCount: Double
+    public let commentCount: Double?
     public let videoID: String
     public let comments: [InvComment]
     public let continuation: String
@@ -221,6 +227,7 @@ public struct InvComment: Codable {
     public let authorIsChannelOwner: Bool
     public let creatorHeart: InvCreatorHeart?
     public let replies: InvReplies?
+    public let verified: Bool?
 
     public enum CodingKeys: String, CodingKey {
         case author, authorThumbnails
@@ -230,7 +237,7 @@ public struct InvComment: Codable {
         case contentHTML = "contentHtml"
         case published, publishedText, likeCount
         case commentID = "commentId"
-        case authorIsChannelOwner, creatorHeart, replies
+        case authorIsChannelOwner, creatorHeart, replies, verified
     }
 }
 

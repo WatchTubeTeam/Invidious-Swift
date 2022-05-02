@@ -107,7 +107,7 @@ public struct inv {
     ///   - sortby: What to sort the comments by
     ///   - source: Sources Reddit or YouTube comments
     /// - Returns: A structure containing comments data
-    static public func comments(id: String, continuation: String? = nil, sortby: SortByTypes? = nil, source: CommentSources? = nil) async -> InvComments! {
+    static public func comments(id: String, continuation: String? = nil, sortby: CommentSortByType? = nil, source: CommentSource? = nil) async -> InvComments! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
             return nil
@@ -163,7 +163,7 @@ public struct inv {
     ///   - cc: Country code to get data for different countries
     ///   - type: Category of video types to get
     /// - Returns: An array of trending videos
-    static public func trending(cc: String? = nil, type: TrendingTypes? = .none) async -> InvTrending! {
+    static public func trending(cc: String? = nil, type: TrendingType? = .none) async -> InvTrending! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
             return nil
@@ -216,7 +216,7 @@ public struct inv {
     ///   - udid: UDID of the channel
     ///   - sortby: What to sort the videos array by
     /// - Returns: All of the channel's data along with a video array
-    static public func channel(udid: String, sortby: ChannelSortByTypes? = .none) async -> InvChannel! {
+    static public func channel(udid: String, sortby: ChannelSortByType? = .none) async -> InvChannel! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
             return nil
@@ -246,7 +246,7 @@ public struct inv {
     ///   - page: The page number
     ///   - sortby: What to sort the videos by
     /// - Returns: An array of the channel's videos
-    static public func channelVideos(udid: String, page: Int = 1, sortby: ChannelSortByTypes? = .none) async -> InvChannelVideos! {
+    static public func channelVideos(udid: String, page: Int = 1, sortby: ChannelSortByType? = .none) async -> InvChannelVideos! {
         let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
         guard let instance = URL(string: instanceURLstring) else {
             return nil
@@ -357,21 +357,21 @@ public struct inv {
 
 // MARK: - Enums - for parameters of endpoints
 
-public enum SortByTypes: String {
+public enum CommentSortByType: String {
     case top = "top"
     case new = "new"
 }
-public enum CommentSources: String {
+public enum CommentSource: String {
     case youtube = "youtube"
     case reddit = "reddit"
 }
-public enum TrendingTypes: String {
+public enum TrendingType: String {
     case music = "music"
     case gaming = "gaming"
     case news = "news"
     case movies = "movies"
 }
-public enum ChannelSortByTypes: String {
+public enum ChannelSortByType: String {
     case newest = "newest"
     case oldest = "oldest"
     case popular = "popular"
