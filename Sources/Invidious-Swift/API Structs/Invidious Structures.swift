@@ -204,7 +204,7 @@ public struct InvComments: Codable {
     public let commentCount: Double?
     public let videoID: String
     public let comments: [InvComment]
-    public let continuation: String
+    public let continuation: String?
 
     public enum CodingKeys: String, CodingKey {
         case commentCount
@@ -222,7 +222,7 @@ public struct InvComment: Codable {
     public let content, contentHTML: String
     public let published: Int
     public let publishedText: String
-    public let likeCount: Double
+    public let likeCount: Int
     public let commentID: String
     public let authorIsChannelOwner: Bool
     public let creatorHeart: InvCreatorHeart?
@@ -245,6 +245,12 @@ public struct InvComment: Codable {
 public struct InvCreatorHeart: Codable {
     public let creatorThumbnail: String
     public let creatorName: String
+}
+
+// MARK: - InvReplies
+public struct InvReplies: Codable {
+    public let replyCount: Int
+    public let continuation: String?
 }
 
 // MARK: - InvReplies
