@@ -249,12 +249,6 @@ public struct InvCreatorHeart: Codable {
 
 // MARK: - InvReplies
 public struct InvReplies: Codable {
-    public let replyCount: Int
-    public let continuation: String?
-}
-
-// MARK: - InvReplies
-public struct InvReplies: Codable {
     public let replyCount: Double
     public let continuation: String?
 }
