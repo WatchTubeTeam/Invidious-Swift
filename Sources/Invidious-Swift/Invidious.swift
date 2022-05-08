@@ -43,6 +43,10 @@ public struct inv {
         }
     }
     
+    static public func internalCaching(_ cache: Bool) {
+        UserDefaults.standard.set(cache, forKey: "InvidiousInternalCaching")
+    }
+    
     // MARK: - Endpoint - Stats
     /// Provides information about the current instance
     /// # Usage
@@ -60,7 +64,15 @@ public struct inv {
         }
         
         do {
-            let (data, _) = try await URLSession.shared.data(from: instance.appendingPathComponent("api/v1/stats"))
+            var data: Data = Data()
+            let cached = getData(subdir: "stats", name: "stats")
+            if cached != nil {
+                data = cached!
+            } else {
+                let (res, _) = try await URLSession.shared.data(from: instance.appendingPathComponent("api/v1/stats"))
+                data = res
+                cacheData(res, subdir: "stats", name: "stats")
+            }
             let stats = try? JSONDecoder().decode(InvStats.self, from: data)
             return stats
             
@@ -88,12 +100,19 @@ public struct inv {
             return nil
         }
         do {
+            var data: Data = Data()
             let url: URL = instance.appendingPathComponent(cc == nil ? "api/v1/videos/\(id)" : "api/v1/videos/\(id)?cc=\(cc ?? "us")")
-            
-            let (data, _) = try await URLSession.shared.data(from: url)
+            let cached = getData(subdir: "video", name: url.absoluteString.hashed)
+            if cached != nil {
+                data = cached!
+            } else {
+                let (res, _) = try await URLSession.shared.data(from: url)
+                data = res
+                cacheData(res, subdir: "video", name: url.absoluteString.hashed)
+            }
             let video = try? JSONDecoder().decode(InvVideo.self, from: data)
-
             return video
+            
         } catch {
             return nil
         }
@@ -128,8 +147,15 @@ public struct inv {
             }
             mutableURL.queryItems = queryitems
             url = mutableURL.url!
-            
-            let (data, _) = try await URLSession.shared.data(from: url)
+            var data = Data()
+            let cached = getData(subdir: "comments", name: url.absoluteString.hashed)
+            if cached != nil {
+                data = cached!
+            } else {
+                let (res, _) = try await URLSession.shared.data(from: url)
+                data = res
+                cacheData(res, subdir: "comments", name: url.absoluteString.hashed)
+            }
             let comments = try? JSONDecoder().decode(InvComments.self, from: data)
             return comments
         } catch {
@@ -149,7 +175,15 @@ public struct inv {
         
         do {
             let url = instance.appendingPathComponent("api/v1/captions/\(id)")
-            let (data, _) = try await URLSession.shared.data(from: url)
+            var data = Data()
+            let cached = getData(subdir: "captions", name: url.absoluteString.hashed)
+            if cached != nil {
+                data = cached!
+            } else {
+                let (res, _) = try await URLSession.shared.data(from: url)
+                data = res
+                cacheData(res, subdir: "captions", name: url.absoluteString.hashed)
+            }
             let captions = try? JSONDecoder().decode(InvCaptions.self, from: data)
             return captions
         } catch {
@@ -182,7 +216,15 @@ public struct inv {
             mutableURL.queryItems = queryitems
             url = mutableURL.url!
             
-            let (data, _) = try await URLSession.shared.data(from: url)
+            var data: Data = Data()
+            let cached = getData(subdir: "trending", name: "trending")
+            if cached != nil && Bool.random() { /// using random as a way to eventually update cached data
+                data = cached!
+            } else {
+                let (res, _) = try await URLSession.shared.data(from: url)
+                data = res
+                cacheData(res, subdir: "trending", name: "trending")
+            }
             let trending = try? JSONDecoder().decode(InvTrending.self, from: data)
             return trending
         } catch {
@@ -202,7 +244,15 @@ public struct inv {
         do {
             let url = instance.appendingPathComponent("api/v1/popular")
             
-            let (data, _) = try await URLSession.shared.data(from: url)
+            var data: Data = Data()
+            let cached = getData(subdir: "trending", name: "trending")
+            if cached != nil && Bool.random() { /// using random as a way to eventually update cached data
+                data = cached!
+            } else {
+                let (res, _) = try await URLSession.shared.data(from: url)
+                data = res
+                cacheData(res, subdir: "trending", name: "trending")
+            }
             let popular = try? JSONDecoder().decode(InvPopular.self, from: data)
             return popular
         } catch {
@@ -231,7 +281,16 @@ public struct inv {
             }
             url = mutableURL.url!
             
-            let (data, _) = try await URLSession.shared.data(from: url)
+            var data: Data = Data()
+            let cached = getData(subdir: "channel", name: url.absoluteString.hashed)
+            if cached != nil && Bool.random() { /// using random as a way to eventually update cached data
+                data = cached!
+            } else {
+                let (res, _) = try await URLSession.shared.data(from: url)
+                data = res
+                cacheData(res, subdir: "channel", name: url.absoluteString.hashed)
+            }
+            
             let channel = try? JSONDecoder().decode(InvChannel.self, from: data)
             return channel
         } catch {
@@ -263,7 +322,16 @@ public struct inv {
             mutableURL.queryItems = queryitems
             url = mutableURL.url!
             
-            let (data, _) = try await URLSession.shared.data(from: url)
+            var data: Data = Data()
+            let cached = getData(subdir: "channelvideos", name: url.absoluteString.hashed)
+            if cached != nil && Bool.random() { /// using random as a way to eventually update cached data
+                data = cached!
+            } else {
+                let (res, _) = try await URLSession.shared.data(from: url)
+                data = res
+                cacheData(res, subdir: "channelvideos", name: url.absoluteString.hashed)
+            }
+            
             let channel = try? JSONDecoder().decode(InvChannelVideos.self, from: data)
             return channel
         } catch {
@@ -294,7 +362,16 @@ public struct inv {
             mutableURL.queryItems = queryitems
             url = mutableURL.url!
             
-            let (data, _) = try await URLSession.shared.data(from: url)
+            var data: Data = Data()
+            let cached = getData(subdir: "search", name: url.absoluteString.hashed)
+            if cached != nil && Bool.random() { /// using random as a way to eventually update cached data
+                data = cached!
+            } else {
+                let (res, _) = try await URLSession.shared.data(from: url)
+                data = res
+                cacheData(res, subdir: "search", name: url.absoluteString.hashed)
+            }
+            
             let search = try? JSONDecoder().decode(InvSearch.self, from: data)
             return search
         } catch {
@@ -318,7 +395,15 @@ public struct inv {
             mutableURL.queryItems = [URLQueryItem(name: "q", value: q)]
             url = mutableURL.url!
             
-            let (data, _) = try await URLSession.shared.data(from: url)
+            var data: Data = Data()
+            let cached = getData(subdir: "searchsuggest", name: url.absoluteString.hashed)
+            if cached != nil && Bool.random() { /// using random as a way to eventually update cached data
+                data = cached!
+            } else {
+                let (res, _) = try await URLSession.shared.data(from: url)
+                data = res
+                cacheData(res, subdir: "searchsuggest", name: url.absoluteString.hashed)
+            }
             let suggest = try? JSONDecoder().decode(InvSearchSuggestions.self, from: data)
             return suggest
         } catch {
@@ -344,7 +429,15 @@ public struct inv {
             mutableURL.queryItems = [URLQueryItem(name: "page", value: String(page))]
             url = mutableURL.url!
             
-            let (data, _) = try await URLSession.shared.data(from: url)
+            var data: Data = Data()
+            let cached = getData(subdir: "playlist", name: url.absoluteString.hashed)
+            if cached != nil && Bool.random() { /// using random as a way to eventually update cached data
+                data = cached!
+            } else {
+                let (res, _) = try await URLSession.shared.data(from: url)
+                data = res
+                cacheData(res, subdir: "playlistk", name: url.absoluteString.hashed)
+            }
             let playlist = try? JSONDecoder().decode(InvPlaylist.self, from: data)
             return playlist
         } catch {
@@ -381,4 +474,29 @@ public enum SearchType: String {
     case playlist = "playlist"
     case channel = "channel"
     case all = "all"
+}
+
+private func cacheData(_ data: Data, subdir: String, name: String) {
+    var path = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+    try? FileManager.default.createDirectory(at: path!.appendingPathComponent("InvidiousSwiftWrapperCache/\(subdir)/"), withIntermediateDirectories: true)
+    path?.appendPathComponent("InvidiousSwiftWrapperCache/\(subdir)/\(name)")
+    try? data.write(to: path!)
+}
+private func getData(subdir: String, name: String) -> Data! {
+    var path = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+    path?.appendPathComponent("InvidiousSwiftWrapperCache/\(subdir)/\(name)")
+    let data = try? Data(contentsOf: path!)
+    return UserDefaults.standard.bool(forKey: "InvidiousInternalCaching") ? data : nil
+}
+
+private extension String {
+    /// Returns a hash value that is reproducible across sessions.
+    var hashed: String {
+        var result = UInt64 (5381)
+        let buf = [UInt8](self.utf8)
+        for b in buf {
+            result = 127 * (result & 0x00ffffffffffffff) + UInt64(b)
+        }
+        return String(result)
+    }
 }
