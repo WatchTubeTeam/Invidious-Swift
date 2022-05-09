@@ -45,7 +45,7 @@ final class Invidious_SwiftTests: XCTestCase {
     func testSpeed() async throws {
         inv.internalCaching(true)
         let first = Date()
-        let data = await inv.video(id: "eTcVLqKpZJc")
+        let data = await inv.captions(id: "eTcVLqKpZJc").captions[0].createCaptions()
         let second = Date()
         print("Took \(second - first)s")
         XCTAssert(data != nil)

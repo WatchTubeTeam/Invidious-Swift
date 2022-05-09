@@ -55,14 +55,25 @@ public extension InvVideoCaption {
         }
         let id = self.url.components(separatedBy: "?label=")[0].components(separatedBy: "api/v1/captions/")[1]
 
-        let url = URL(string: instance.appendingPathComponent("api/v1/captions/\(id)?label=\(self.label.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? "english")").absoluteString.removingPercentEncoding!)
-    
+        let url = URL(string: instance.appendingPathComponent("api/v1/captions/\(id)?label=\(self.label.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? "english")").absoluteString.removingPercentEncoding!)!
+        
+        let hashFileName = url.absoluteString.hashed
+        
         do {
-            let (data, _) = try await URLSession.shared.data(from: url!)
+            var data: Data = Data()
+            let cached = getData(subdir: "storedcaptions", name: hashFileName)
+            if cached != nil { /// using random as a way to eventually update cached data
+                data = cached!
+            } else {
+                let (res, _) = try await URLSession.shared.data(from: url)
+                data = res
+                cacheData(res, subdir: "storedcaptions", name: hashFileName)
+            }
+
             guard let result = String(data: data, encoding: .utf8) else {
                 return nil
             }
-                    
+            
             
             // Parsing
             let label = self.label
@@ -106,7 +117,7 @@ public extension InvVideoCaption {
                 array.append(finalSub)
             }
             let finalised = CaptionSet(lang: language, label: label, captions: array)
-
+            
             return finalised
             
         } catch {
@@ -134,10 +145,21 @@ public extension InvCaption {
         }
         let id = self.url.components(separatedBy: "?label=")[0].components(separatedBy: "api/v1/captions/")[1]
 
-        let url = URL(string: instance.appendingPathComponent("api/v1/captions/\(id)?label=\(self.label.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? "english")").absoluteString.removingPercentEncoding!)
-    
+        let url = URL(string: instance.appendingPathComponent("api/v1/captions/\(id)?label=\(self.label.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? "english")").absoluteString.removingPercentEncoding!)!
+        
+        let hashFileName = url.absoluteString.hashed
+        
         do {
-            let (data, _) = try await URLSession.shared.data(from: url!)
+            var data: Data = Data()
+            let cached = getData(subdir: "storedcaptions", name: hashFileName)
+            if cached != nil { /// using random as a way to eventually update cached data
+                data = cached!
+            } else {
+                let (res, _) = try await URLSession.shared.data(from: url)
+                data = res
+                cacheData(res, subdir: "storedcaptions", name: hashFileName)
+            }
+
             guard let result = String(data: data, encoding: .utf8) else {
                 return nil
             }

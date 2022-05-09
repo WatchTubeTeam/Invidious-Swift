@@ -66,7 +66,7 @@ public struct inv {
         do {
             var data: Data = Data()
             let cached = getData(subdir: "stats", name: "stats")
-            if cached != nil {
+            if cached != nil && Bool.random() { /// using random as a way to eventually update cached data
                 data = cached!
             } else {
                 let (res, _) = try await URLSession.shared.data(from: instance.appendingPathComponent("api/v1/stats"))
@@ -103,7 +103,7 @@ public struct inv {
             var data: Data = Data()
             let url: URL = instance.appendingPathComponent(cc == nil ? "api/v1/videos/\(id)" : "api/v1/videos/\(id)?cc=\(cc ?? "us")")
             let cached = getData(subdir: "video", name: url.absoluteString.hashed)
-            if cached != nil {
+            if cached != nil && Bool.random() { /// using random as a way to eventually update cached data
                 data = cached!
             } else {
                 let (res, _) = try await URLSession.shared.data(from: url)
@@ -149,7 +149,7 @@ public struct inv {
             url = mutableURL.url!
             var data = Data()
             let cached = getData(subdir: "comments", name: url.absoluteString.hashed)
-            if cached != nil {
+            if cached != nil && Bool.random() { /// using random as a way to eventually update cached data
                 data = cached!
             } else {
                 let (res, _) = try await URLSession.shared.data(from: url)
@@ -177,7 +177,7 @@ public struct inv {
             let url = instance.appendingPathComponent("api/v1/captions/\(id)")
             var data = Data()
             let cached = getData(subdir: "captions", name: url.absoluteString.hashed)
-            if cached != nil {
+            if cached != nil && Bool.random() { /// using random as a way to eventually update cached data
                 data = cached!
             } else {
                 let (res, _) = try await URLSession.shared.data(from: url)
@@ -436,7 +436,7 @@ public struct inv {
             } else {
                 let (res, _) = try await URLSession.shared.data(from: url)
                 data = res
-                cacheData(res, subdir: "playlistk", name: url.absoluteString.hashed)
+                cacheData(res, subdir: "playlist", name: url.absoluteString.hashed)
             }
             let playlist = try? JSONDecoder().decode(InvPlaylist.self, from: data)
             return playlist
@@ -476,27 +476,30 @@ public enum SearchType: String {
     case all = "all"
 }
 
-private func cacheData(_ data: Data, subdir: String, name: String) {
+// MARK: - Private Stuff - for internal caching stuff
+
+internal func cacheData(_ data: Data, subdir: String, name: String) {
     var path = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
     try? FileManager.default.createDirectory(at: path!.appendingPathComponent("InvidiousSwiftWrapperCache/\(subdir)/"), withIntermediateDirectories: true)
     path?.appendPathComponent("InvidiousSwiftWrapperCache/\(subdir)/\(name)")
     try? data.write(to: path!)
 }
-private func getData(subdir: String, name: String) -> Data! {
+internal func getData(subdir: String, name: String) -> Data! {
     var path = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
     path?.appendPathComponent("InvidiousSwiftWrapperCache/\(subdir)/\(name)")
     let data = try? Data(contentsOf: path!)
-    return UserDefaults.standard.bool(forKey: "InvidiousInternalCaching") ? data : nil
+    return UserDefaults.standard.bool(forKey: "InvidiousInternalCaching") ? data : nil /// im sorry but i will always cache data even if you disable caching.
 }
 
-private extension String {
+internal extension String {
     /// Returns a hash value that is reproducible across sessions.
+    /// This doesn't need to be secure as we're just using the hash to lookup and store data
     var hashed: String {
         var result = UInt64 (5381)
         let buf = [UInt8](self.utf8)
         for b in buf {
             result = 127 * (result & 0x00ffffffffffffff) + UInt64(b)
         }
-        return String(result)
+        return String(result) /// though if caching is off, i will not load any cached data.
     }
 }
