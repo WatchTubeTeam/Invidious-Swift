@@ -10,6 +10,9 @@ import Foundation
 /// Structure containing all API interaction functions and other utilities
 /// > Every exposed endpoint here returns an optional. If any issues of any type occur, you will receive `nil`
 public struct inv {
+    
+    static public var Timeout: Double = 4
+    
     // MARK: - Package stuff
     /// Package function to change the instance being used.
     /// # Usage
@@ -32,7 +35,8 @@ public struct inv {
                 return true
             } else {
                 let test = url.appendingPathComponent("api/v1/trending")
-                let (data, _) = try await URLSession.shared.data(from: test)
+                let req = URLRequest(url: test, timeoutInterval: Timeout)
+                let (data, _) = try await URLSession.shared.data(for: req)
                 let trending = try? JSONDecoder().decode(InvTrending.self, from: data)
                 if trending == nil { return false }
                 UserDefaults.standard.set(url.absoluteString, forKey: "InvidiousInstanceURL")
@@ -69,7 +73,8 @@ public struct inv {
             if cached != nil && Bool.random() { /// using random as a way to eventually update cached data
                 data = cached!
             } else {
-                let (res, _) = try await URLSession.shared.data(from: instance.appendingPathComponent("api/v1/stats"))
+                let req = URLRequest(url: instance.appendingPathComponent("api/v1/stats"), timeoutInterval: Timeout)
+                let (res, _) = try await URLSession.shared.data(for: req)
                 data = res
                 cacheData(res, subdir: "stats", name: "stats")
             }
@@ -106,7 +111,8 @@ public struct inv {
             if cached != nil && Bool.random() { /// using random as a way to eventually update cached data
                 data = cached!
             } else {
-                let (res, _) = try await URLSession.shared.data(from: url)
+                let req = URLRequest(url: url, timeoutInterval: Timeout)
+                let (res, _) = try await URLSession.shared.data(for: req)
                 data = res
                 cacheData(res, subdir: "video", name: url.absoluteString.hashed)
             }
@@ -152,7 +158,8 @@ public struct inv {
             if cached != nil && Bool.random() { /// using random as a way to eventually update cached data
                 data = cached!
             } else {
-                let (res, _) = try await URLSession.shared.data(from: url)
+                let req = URLRequest(url: url, timeoutInterval: Timeout)
+                let (res, _) = try await URLSession.shared.data(for: req)
                 data = res
                 cacheData(res, subdir: "comments", name: url.absoluteString.hashed)
             }
@@ -180,7 +187,8 @@ public struct inv {
             if cached != nil && Bool.random() { /// using random as a way to eventually update cached data
                 data = cached!
             } else {
-                let (res, _) = try await URLSession.shared.data(from: url)
+                let req = URLRequest(url: url, timeoutInterval: Timeout)
+                let (res, _) = try await URLSession.shared.data(for: req)
                 data = res
                 cacheData(res, subdir: "captions", name: url.absoluteString.hashed)
             }
@@ -221,7 +229,8 @@ public struct inv {
             if cached != nil && Bool.random() { /// using random as a way to eventually update cached data
                 data = cached!
             } else {
-                let (res, _) = try await URLSession.shared.data(from: url)
+                let req = URLRequest(url: url, timeoutInterval: Timeout)
+                let (res, _) = try await URLSession.shared.data(for: req)
                 data = res
                 cacheData(res, subdir: "trending", name: "trending")
             }
@@ -249,7 +258,8 @@ public struct inv {
             if cached != nil && Bool.random() { /// using random as a way to eventually update cached data
                 data = cached!
             } else {
-                let (res, _) = try await URLSession.shared.data(from: url)
+                let req = URLRequest(url: url, timeoutInterval: Timeout)
+                let (res, _) = try await URLSession.shared.data(for: req)
                 data = res
                 cacheData(res, subdir: "trending", name: "trending")
             }
@@ -286,7 +296,8 @@ public struct inv {
             if cached != nil && Bool.random() { /// using random as a way to eventually update cached data
                 data = cached!
             } else {
-                let (res, _) = try await URLSession.shared.data(from: url)
+                let req = URLRequest(url: url, timeoutInterval: Timeout)
+                let (res, _) = try await URLSession.shared.data(for: req)
                 data = res
                 cacheData(res, subdir: "channel", name: url.absoluteString.hashed)
             }
@@ -327,7 +338,8 @@ public struct inv {
             if cached != nil && Bool.random() { /// using random as a way to eventually update cached data
                 data = cached!
             } else {
-                let (res, _) = try await URLSession.shared.data(from: url)
+                let req = URLRequest(url: url, timeoutInterval: Timeout)
+                let (res, _) = try await URLSession.shared.data(for: req)
                 data = res
                 cacheData(res, subdir: "channelvideos", name: url.absoluteString.hashed)
             }
@@ -367,7 +379,8 @@ public struct inv {
             if cached != nil && Bool.random() { /// using random as a way to eventually update cached data
                 data = cached!
             } else {
-                let (res, _) = try await URLSession.shared.data(from: url)
+                let req = URLRequest(url: url, timeoutInterval: Timeout)
+                let (res, _) = try await URLSession.shared.data(for: req)
                 data = res
                 cacheData(res, subdir: "search", name: url.absoluteString.hashed)
             }
@@ -400,7 +413,8 @@ public struct inv {
             if cached != nil && Bool.random() { /// using random as a way to eventually update cached data
                 data = cached!
             } else {
-                let (res, _) = try await URLSession.shared.data(from: url)
+                let req = URLRequest(url: url, timeoutInterval: Timeout)
+                let (res, _) = try await URLSession.shared.data(for: req)
                 data = res
                 cacheData(res, subdir: "searchsuggest", name: url.absoluteString.hashed)
             }
@@ -434,7 +448,8 @@ public struct inv {
             if cached != nil && Bool.random() { /// using random as a way to eventually update cached data
                 data = cached!
             } else {
-                let (res, _) = try await URLSession.shared.data(from: url)
+                let req = URLRequest(url: url, timeoutInterval: Timeout)
+                let (res, _) = try await URLSession.shared.data(for: req)
                 data = res
                 cacheData(res, subdir: "playlist", name: url.absoluteString.hashed)
             }
