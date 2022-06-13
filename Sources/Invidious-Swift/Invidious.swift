@@ -11,7 +11,7 @@ import Foundation
 /// > Every exposed endpoint here returns an optional. If any issues of any type occur, you will receive `nil`
 public struct inv {
     
-    static public var Timeout: Double = 4
+    static public var Timeout: Double = 15
     
     // MARK: - Package stuff
     /// Package function to change the instance being used.
@@ -62,28 +62,8 @@ public struct inv {
     /// ```
     /// - Returns: instance data
     static public func stats() async -> InvStats! {
-        let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
-        guard let instance = URL(string: instanceURLstring) else {
-            return nil
-        }
-        
-        do {
-            var data: Data = Data()
-            let cached = getData(subdir: "stats", name: "stats")
-            if cached != nil && Bool.random() { /// using random as a way to eventually update cached data
-                data = cached!
-            } else {
-                let req = URLRequest(url: instance.appendingPathComponent("api/v1/stats"), timeoutInterval: Timeout)
-                let (res, _) = try await URLSession.shared.data(for: req)
-                data = res
-                cacheData(res, subdir: "stats", name: "stats")
-            }
-            let stats = try? JSONDecoder().decode(InvStats.self, from: data)
-            return stats
-            
-        } catch {
-            return nil
-        }
+        let stats = await fetch(InvStats.self, "stats")
+        return stats
     }
     
     // MARK: - Endpoint - Video
@@ -100,28 +80,10 @@ public struct inv {
     ///   - cc: Country code to use
     /// - Returns: All of the video data
     static public func video(id: String, cc: String? = nil) async -> InvVideo! {
-        let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
-        guard let instance = URL(string: instanceURLstring) else {
-            return nil
-        }
-        do {
-            var data: Data = Data()
-            let url: URL = instance.appendingPathComponent(cc == nil ? "api/v1/videos/\(id)" : "api/v1/videos/\(id)?cc=\(cc ?? "us")")
-            let cached = getData(subdir: "video", name: url.absoluteString.hashed)
-            if cached != nil && Bool.random() { /// using random as a way to eventually update cached data
-                data = cached!
-            } else {
-                let req = URLRequest(url: url, timeoutInterval: Timeout)
-                let (res, _) = try await URLSession.shared.data(for: req)
-                data = res
-                cacheData(res, subdir: "video", name: url.absoluteString.hashed)
-            }
-            let video = try? JSONDecoder().decode(InvVideo.self, from: data)
-            return video
-            
-        } catch {
-            return nil
-        }
+        var params = [URLQueryItem]()
+        if cc != nil { params.append(URLQueryItem(name: "cc", value: cc))}
+        let vid = await fetch(InvVideo.self, "videos/\(id)", params: params)
+        return vid
     }
     
     // MARK: - Endpoint - Comments
@@ -133,41 +95,18 @@ public struct inv {
     ///   - source: Sources Reddit or YouTube comments
     /// - Returns: A structure containing comments data
     static public func comments(id: String, continuation: String? = nil, sortby: CommentSortByType? = nil, source: CommentSource? = nil) async -> InvComments! {
-        let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
-        guard let instance = URL(string: instanceURLstring) else {
-            return nil
+        var queryitems = [URLQueryItem]()
+        if (continuation != nil) {
+            queryitems.append(URLQueryItem(name: "continuation", value: continuation))
         }
-        
-        do {
-            var url = instance.appendingPathComponent("api/v1/comments/\(id)")
-            var mutableURL: URLComponents = URLComponents(string: url.absoluteString)!
-            var queryitems = [URLQueryItem]()
-            if (continuation != nil) {
-                queryitems.append(URLQueryItem(name: "continuation", value: continuation))
-            }
-            if (sortby != nil) {
-                queryitems.append(URLQueryItem(name: "sort_by", value: sortby?.rawValue))
-            }
-            if (source != nil) {
-                queryitems.append(URLQueryItem(name: "source", value: source?.rawValue))
-            }
-            mutableURL.queryItems = queryitems
-            url = mutableURL.url!
-            var data = Data()
-            let cached = getData(subdir: "comments", name: url.absoluteString.hashed)
-            if cached != nil && Bool.random() { /// using random as a way to eventually update cached data
-                data = cached!
-            } else {
-                let req = URLRequest(url: url, timeoutInterval: Timeout)
-                let (res, _) = try await URLSession.shared.data(for: req)
-                data = res
-                cacheData(res, subdir: "comments", name: url.absoluteString.hashed)
-            }
-            let comments = try? JSONDecoder().decode(InvComments.self, from: data)
-            return comments
-        } catch {
-            return nil
+        if (sortby != nil) {
+            queryitems.append(URLQueryItem(name: "sort_by", value: sortby?.rawValue))
         }
+        if (source != nil) {
+            queryitems.append(URLQueryItem(name: "source", value: source?.rawValue))
+        }
+        let comments = await fetch(InvComments.self, "comments/\(id)", params: queryitems)
+        return comments
     }
     
     // MARK: - Endpoint - Captions
@@ -175,28 +114,8 @@ public struct inv {
     /// - Parameter id: ID of the video
     /// - Returns: Available captions along with a helper extension to generate a subtitle set for you
     static public func captions(id: String) async -> InvCaptions! {
-        let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
-        guard let instance = URL(string: instanceURLstring) else {
-            return nil
-        }
-        
-        do {
-            let url = instance.appendingPathComponent("api/v1/captions/\(id)")
-            var data = Data()
-            let cached = getData(subdir: "captions", name: url.absoluteString.hashed)
-            if cached != nil && Bool.random() { /// using random as a way to eventually update cached data
-                data = cached!
-            } else {
-                let req = URLRequest(url: url, timeoutInterval: Timeout)
-                let (res, _) = try await URLSession.shared.data(for: req)
-                data = res
-                cacheData(res, subdir: "captions", name: url.absoluteString.hashed)
-            }
-            let captions = try? JSONDecoder().decode(InvCaptions.self, from: data)
-            return captions
-        } catch {
-            return nil
-        }
+        let captions = await fetch(InvCaptions.self, "captions/\(id)")
+        return captions
     }
     
     // MARK: - Endpoint - Trending
@@ -206,68 +125,23 @@ public struct inv {
     ///   - type: Category of video types to get
     /// - Returns: An array of trending videos
     static public func trending(cc: String? = nil, type: TrendingType? = .none) async -> InvTrending! {
-        let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
-        guard let instance = URL(string: instanceURLstring) else {
-            return nil
+        var queryitems = [URLQueryItem]()
+        if (cc != nil) {
+            queryitems.append(URLQueryItem(name: "cc", value: cc))
         }
-        
-        do {
-            var url = instance.appendingPathComponent("api/v1/trending")
-            var mutableURL: URLComponents = URLComponents(string: url.absoluteString)!
-            var queryitems = [URLQueryItem]()
-            if (cc != nil) {
-                queryitems.append(URLQueryItem(name: "cc", value: cc))
-            }
-            if (type != nil) {
-                queryitems.append(URLQueryItem(name: "type", value: type?.rawValue))
-            }
-            mutableURL.queryItems = queryitems
-            url = mutableURL.url!
-            
-            var data: Data = Data()
-            let cached = getData(subdir: "trending", name: "trending")
-            if cached != nil && Bool.random() { /// using random as a way to eventually update cached data
-                data = cached!
-            } else {
-                let req = URLRequest(url: url, timeoutInterval: Timeout)
-                let (res, _) = try await URLSession.shared.data(for: req)
-                data = res
-                cacheData(res, subdir: "trending", name: "trending")
-            }
-            let trending = try? JSONDecoder().decode(InvTrending.self, from: data)
-            return trending
-        } catch {
-            return nil
+        if (type != nil) {
+            queryitems.append(URLQueryItem(name: "type", value: type?.rawValue))
         }
+        let trending = await fetch(InvTrending.self, "trending", params: queryitems)
+        return trending
     }
     
     // MARK: - Endpoint - Popular
     /// Returns popular videos from YouTube
     /// - Returns: An array of popular  videos
     static public func popular() async -> InvPopular! {
-        let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
-        guard let instance = URL(string: instanceURLstring) else {
-            return nil
-        }
-        
-        do {
-            let url = instance.appendingPathComponent("api/v1/popular")
-            
-            var data: Data = Data()
-            let cached = getData(subdir: "trending", name: "trending")
-            if cached != nil && Bool.random() { /// using random as a way to eventually update cached data
-                data = cached!
-            } else {
-                let req = URLRequest(url: url, timeoutInterval: Timeout)
-                let (res, _) = try await URLSession.shared.data(for: req)
-                data = res
-                cacheData(res, subdir: "trending", name: "trending")
-            }
-            let popular = try? JSONDecoder().decode(InvPopular.self, from: data)
-            return popular
-        } catch {
-            return nil
-        }
+        let popular = await fetch(InvPopular.self, "popular")
+        return popular
     }
     
     // MARK: - Endpoint - Channel
@@ -277,36 +151,12 @@ public struct inv {
     ///   - sortby: What to sort the videos array by
     /// - Returns: All of the channel's data along with a video array
     static public func channel(udid: String, sortby: ChannelSortByType? = .none) async -> InvChannel! {
-        let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
-        guard let instance = URL(string: instanceURLstring) else {
-            return nil
+        var queryitems = [URLQueryItem]()
+        if (sortby != .none) {
+            queryitems.append(URLQueryItem(name: "sort_by", value: sortby?.rawValue))
         }
-        
-        do {
-            var url = instance.appendingPathComponent("api/v1/channels/\(udid)")
-            var mutableURL: URLComponents = URLComponents(string: url.absoluteString)!
-            
-            if (sortby != nil) {
-                mutableURL.queryItems = [URLQueryItem(name: "sort_by", value: sortby?.rawValue)]
-            }
-            url = mutableURL.url!
-            
-            var data: Data = Data()
-            let cached = getData(subdir: "channel", name: url.absoluteString.hashed)
-            if cached != nil && Bool.random() { /// using random as a way to eventually update cached data
-                data = cached!
-            } else {
-                let req = URLRequest(url: url, timeoutInterval: Timeout)
-                let (res, _) = try await URLSession.shared.data(for: req)
-                data = res
-                cacheData(res, subdir: "channel", name: url.absoluteString.hashed)
-            }
-            
-            let channel = try? JSONDecoder().decode(InvChannel.self, from: data)
-            return channel
-        } catch {
-            return nil
-        }
+        let channel = await fetch(InvChannel.self, "channels/\(udid)", params: queryitems)
+        return channel
     }
     
     // MARK: - Endpoint - Channel videos
@@ -317,38 +167,13 @@ public struct inv {
     ///   - sortby: What to sort the videos by
     /// - Returns: An array of the channel's videos
     static public func channelVideos(udid: String, page: Int = 1, sortby: ChannelSortByType? = .none) async -> InvChannelVideos! {
-        let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
-        guard let instance = URL(string: instanceURLstring) else {
-            return nil
+        var queryitems = [URLQueryItem]()
+        if (sortby != .none) {
+            queryitems.append(URLQueryItem(name: "sort_by", value: sortby?.rawValue))
         }
-        
-        do {
-            var url = instance.appendingPathComponent("api/v1/channels/videos/\(udid)")
-            var mutableURL: URLComponents = URLComponents(string: url.absoluteString)!
-            var queryitems = [URLQueryItem]()
-            if (sortby != nil) {
-                queryitems.append(URLQueryItem(name: "sort_by", value: sortby?.rawValue))
-            }
-            queryitems.append(URLQueryItem(name: "page", value: String(page)))
-            mutableURL.queryItems = queryitems
-            url = mutableURL.url!
-            
-            var data: Data = Data()
-            let cached = getData(subdir: "channelvideos", name: url.absoluteString.hashed)
-            if cached != nil && Bool.random() { /// using random as a way to eventually update cached data
-                data = cached!
-            } else {
-                let req = URLRequest(url: url, timeoutInterval: Timeout)
-                let (res, _) = try await URLSession.shared.data(for: req)
-                data = res
-                cacheData(res, subdir: "channelvideos", name: url.absoluteString.hashed)
-            }
-            
-            let channel = try? JSONDecoder().decode(InvChannelVideos.self, from: data)
-            return channel
-        } catch {
-            return nil
-        }
+        queryitems.append(URLQueryItem(name: "page", value: String(page)))
+        let chnlVideos = await fetch(InvChannelVideos.self, "channels/videos/\(udid)", params: queryitems)
+        return chnlVideos
     }
     
     // MARK: - Endpoint - Search
@@ -359,37 +184,12 @@ public struct inv {
     ///   - page: The page number
     /// - Returns: An array of different items, defined by the type property of the item
     static public func search(q: String, type: SearchType = .video, page: Int = 1) async -> InvSearch! {
-        let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
-        guard let instance = URL(string: instanceURLstring) else {
-            return nil
-        }
-        
-        do {
-            var url = instance.appendingPathComponent("api/v1/search")
-            var mutableURL: URLComponents = URLComponents(string: url.absoluteString)!
-            var queryitems = [URLQueryItem]()
-            queryitems.append(URLQueryItem(name: "q", value: q))
-            queryitems.append(URLQueryItem(name: "page", value: String(page)))
-            queryitems.append(URLQueryItem(name: "type", value: type.rawValue))
-            mutableURL.queryItems = queryitems
-            url = mutableURL.url!
-            
-            var data: Data = Data()
-            let cached = getData(subdir: "search", name: url.absoluteString.hashed)
-            if cached != nil && Bool.random() { /// using random as a way to eventually update cached data
-                data = cached!
-            } else {
-                let req = URLRequest(url: url, timeoutInterval: Timeout)
-                let (res, _) = try await URLSession.shared.data(for: req)
-                data = res
-                cacheData(res, subdir: "search", name: url.absoluteString.hashed)
-            }
-            
-            let search = try? JSONDecoder().decode(InvSearch.self, from: data)
-            return search
-        } catch {
-            return nil
-        }
+        var queryitems = [URLQueryItem]()
+        queryitems.append(URLQueryItem(name: "q", value: q))
+        queryitems.append(URLQueryItem(name: "page", value: String(page)))
+        queryitems.append(URLQueryItem(name: "type", value: type.rawValue))
+        let search = await fetch(InvSearch.self, "search", params: queryitems)
+        return search
     }
     
     // MARK: - Endpoint - Search Suggestions
@@ -397,32 +197,10 @@ public struct inv {
     /// - Parameter q: The query
     /// - Returns: An array of suggestions
     static public func searchSuggestions(q: String) async -> InvSearchSuggestions! {
-        let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
-        guard let instance = URL(string: instanceURLstring) else {
-            return nil
-        }
-        
-        do {
-            var url = instance.appendingPathComponent("api/v1/search/suggestions")
-            var mutableURL: URLComponents = URLComponents(string: url.absoluteString)!
-            mutableURL.queryItems = [URLQueryItem(name: "q", value: q)]
-            url = mutableURL.url!
-            
-            var data: Data = Data()
-            let cached = getData(subdir: "searchsuggest", name: url.absoluteString.hashed)
-            if cached != nil && Bool.random() { /// using random as a way to eventually update cached data
-                data = cached!
-            } else {
-                let req = URLRequest(url: url, timeoutInterval: Timeout)
-                let (res, _) = try await URLSession.shared.data(for: req)
-                data = res
-                cacheData(res, subdir: "searchsuggest", name: url.absoluteString.hashed)
-            }
-            let suggest = try? JSONDecoder().decode(InvSearchSuggestions.self, from: data)
-            return suggest
-        } catch {
-            return nil
-        }
+        var queryitems = [URLQueryItem]()
+        queryitems.append(URLQueryItem(name: "q", value: q))
+        let suggest = await fetch(InvSearchSuggestions.self, "search/suggestions", params: queryitems)
+        return suggest
     }
     
     // MARK: - Endpoint - Playlist
@@ -432,32 +210,10 @@ public struct inv {
     ///   - page: The page number
     /// - Returns: Data of the playlist and an array of videos
     static public func playlist(plid: String, page: Int = 1) async -> InvPlaylist! {
-        let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
-        guard let instance = URL(string: instanceURLstring) else {
-            return nil
-        }
-        
-        do {
-            var url = instance.appendingPathComponent("api/v1/playlists/\(plid)")
-            var mutableURL: URLComponents = URLComponents(string: url.absoluteString)!
-            mutableURL.queryItems = [URLQueryItem(name: "page", value: String(page))]
-            url = mutableURL.url!
-            
-            var data: Data = Data()
-            let cached = getData(subdir: "playlist", name: url.absoluteString.hashed)
-            if cached != nil && Bool.random() { /// using random as a way to eventually update cached data
-                data = cached!
-            } else {
-                let req = URLRequest(url: url, timeoutInterval: Timeout)
-                let (res, _) = try await URLSession.shared.data(for: req)
-                data = res
-                cacheData(res, subdir: "playlist", name: url.absoluteString.hashed)
-            }
-            let playlist = try? JSONDecoder().decode(InvPlaylist.self, from: data)
-            return playlist
-        } catch {
-            return nil
-        }
+        var queryitems = [URLQueryItem]()
+        queryitems.append(URLQueryItem(name: "page", value: String(page)))
+        let playlist = await fetch(InvPlaylist.self, "playlists/\(plid)", params: queryitems)
+        return playlist
     }
     
     // MARK: - End of Endpoints
@@ -493,15 +249,15 @@ public enum SearchType: String {
 
 // MARK: - Private Stuff - for internal caching stuff
 
-internal func cacheData(_ data: Data, subdir: String, name: String) {
+internal func cacheData(_ data: Data, _ name: String) {
     var path = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
-    try? FileManager.default.createDirectory(at: path!.appendingPathComponent("InvidiousSwiftWrapperCache/\(subdir)/"), withIntermediateDirectories: true)
-    path?.appendPathComponent("InvidiousSwiftWrapperCache/\(subdir)/\(name)")
+    try? FileManager.default.createDirectory(at: path!.appendingPathComponent("InvidiousSwiftWrapperCache/"), withIntermediateDirectories: true)
+    path?.appendPathComponent("InvidiousSwiftWrapperCache/\(name)")
     try? data.write(to: path!)
 }
-internal func getData(subdir: String, name: String) -> Data! {
+internal func getData(_ name: String) -> Data! {
     var path = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
-    path?.appendPathComponent("InvidiousSwiftWrapperCache/\(subdir)/\(name)")
+    path?.appendPathComponent("InvidiousSwiftWrapperCache/\(name)")
     let data = try? Data(contentsOf: path!)
     return UserDefaults.standard.bool(forKey: "InvidiousInternalCaching") ? data : nil /// im sorry but i will always cache data even if you disable caching.
 }
@@ -516,5 +272,44 @@ internal extension String {
             result = 127 * (result & 0x00ffffffffffffff) + UInt64(b)
         }
         return String(result) /// though if caching is off, i will not load any cached data.
+    }
+}
+
+internal func fetch<T: Decodable>(_ T: T.Type, _ path: String, params: [URLQueryItem] = []) async -> T! {
+    let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
+    guard let instance = URL(string: instanceURLstring) else { return nil}
+    do {
+        var url = instance.appendingPathComponent("api/v1/\(path)")
+        var mutableURL: URLComponents = URLComponents(string: url.absoluteString)!
+        mutableURL.queryItems = params
+        url = mutableURL.url!
+        
+        var data: Data = Data()
+        
+        let hash: String = {
+            let path = url.pathComponents.joined(separator: "/")
+            return path.hashed
+        }()
+        
+        let cached = getData(hash)
+        if cached != nil && Bool.random() { /// using random as a way to eventually update cached data
+            if ( try? JSONDecoder().decode(T.self, from: data) ) != nil {
+                data = cached!
+            } else {
+                let req = URLRequest(url: url, timeoutInterval: inv.Timeout)
+                let (res, _) = try await URLSession.shared.data(for: req)
+                data = res
+                cacheData(res, hash)
+            }
+        } else {
+            let req = URLRequest(url: url, timeoutInterval: inv.Timeout)
+            let (res, _) = try await URLSession.shared.data(for: req)
+            data = res
+            cacheData(res, hash)
+        }
+        let final = try? JSONDecoder().decode(T.self, from: data)
+        return final
+    } catch {
+        return nil
     }
 }

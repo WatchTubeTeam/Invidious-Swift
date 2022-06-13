@@ -8,7 +8,7 @@ final class Invidious_SwiftTests: XCTestCase {
         var check = 0
         
         //MARK: - Tests
-        
+                
         if (await inv.stats().software.name == "invidious") {
             check += 1
         } else { issues.append("stats") }
@@ -22,7 +22,7 @@ final class Invidious_SwiftTests: XCTestCase {
         } else { issues.append("comments") }
         
         let str = await inv.captions(id: "eTcVLqKpZJc").captions[0].createCaptions()
-        if (str!.label == "English (auto-generated)") {
+        if (str?.label ?? "" == "English (auto-generated)") {
             check += 1
         } else {
             issues.append("captions")
@@ -45,7 +45,7 @@ final class Invidious_SwiftTests: XCTestCase {
     func testSpeed() async throws {
         inv.internalCaching(true)
         let first = Date()
-        let data = await inv.captions(id: "eTcVLqKpZJc").captions[0].createCaptions()
+        let data = await inv.stats()
         let second = Date()
         print("Took \(second - first)s")
         XCTAssert(data != nil)

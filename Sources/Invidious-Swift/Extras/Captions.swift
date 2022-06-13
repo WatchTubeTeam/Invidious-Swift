@@ -57,17 +57,20 @@ public extension InvVideoCaption {
 
         let url = URL(string: instance.appendingPathComponent("api/v1/captions/\(id)?label=\(self.label.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? "english")").absoluteString.removingPercentEncoding!)!
         
-        let hashFileName = url.absoluteString.hashed
+        let hashFileName = {
+            let path = url.pathComponents.joined(separator: "/") + self.label
+            return path.hashed
+        }()
         
         do {
             var data: Data = Data()
-            let cached = getData(subdir: "storedcaptions", name: hashFileName)
+            let cached = getData(hashFileName)
             if cached != nil { /// using random as a way to eventually update cached data
                 data = cached!
             } else {
                 let (res, _) = try await URLSession.shared.data(from: url)
                 data = res
-                cacheData(res, subdir: "storedcaptions", name: hashFileName)
+                cacheData(res, hashFileName)
             }
 
             guard let result = String(data: data, encoding: .utf8) else {
@@ -147,17 +150,20 @@ public extension InvCaption {
 
         let url = URL(string: instance.appendingPathComponent("api/v1/captions/\(id)?label=\(self.label.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? "english")").absoluteString.removingPercentEncoding!)!
         
-        let hashFileName = url.absoluteString.hashed
+        let hashFileName = {
+            let path = url.pathComponents.joined(separator: "/") + self.label
+            return path.hashed
+        }()
         
         do {
             var data: Data = Data()
-            let cached = getData(subdir: "storedcaptions", name: hashFileName)
+            let cached = getData(hashFileName)
             if cached != nil { /// using random as a way to eventually update cached data
                 data = cached!
             } else {
                 let (res, _) = try await URLSession.shared.data(from: url)
                 data = res
-                cacheData(res, subdir: "storedcaptions", name: hashFileName)
+                cacheData(res, hashFileName)
             }
 
             guard let result = String(data: data, encoding: .utf8) else {
