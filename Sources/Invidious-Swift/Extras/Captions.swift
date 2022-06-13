@@ -57,10 +57,8 @@ public extension InvVideoCaption {
 
         let url = URL(string: instance.appendingPathComponent("api/v1/captions/\(id)?label=\(self.label.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? "english")").absoluteString.removingPercentEncoding!)!
         
-        let hashFileName: String = {
-            let path = url.pathComponents.joined(separator: "/") + self.label
-            return path.hashed
-        }()
+        let pathToHash = url.pathComponents.joined(separator: "/") + self.label
+        let hashFileName: String = pathToHash.hashed
         
         do {
             var data: Data = Data()
@@ -150,10 +148,8 @@ public extension InvCaption {
 
         let url = URL(string: instance.appendingPathComponent("api/v1/captions/\(id)?label=\(self.label.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? "english")").absoluteString.removingPercentEncoding!)!
         
-        let hashFileName: String = {
-            let path = url.pathComponents.joined(separator: "/") + self.label
-            return path.hashed
-        }()
+        let pathToHash = url.pathComponents.joined(separator: "/") + self.label
+        let hashFileName: String = pathToHash.hashed
         
         do {
             var data: Data = Data()
