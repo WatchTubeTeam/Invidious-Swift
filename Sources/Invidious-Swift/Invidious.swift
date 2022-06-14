@@ -278,6 +278,9 @@ internal extension String {
 internal func fetch<T: Decodable>(_ T: T.Type, _ path: String, params: [URLQueryItem] = []) async -> T! {
     let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
     guard let instance = URL(string: instanceURLstring) else { return nil}
+    
+    var debug: Data! = nil
+    
     do {
         var url = instance.appendingPathComponent("api/v1/\(path)")
         var mutableURL: URLComponents = URLComponents(string: url.absoluteString)!
@@ -292,24 +295,25 @@ internal func fetch<T: Decodable>(_ T: T.Type, _ path: String, params: [URLQuery
         }()
         
         let cached = getData(hash)
-        if cached != nil && Bool.random() { /// using random as a way to eventually update cached data
+        var dataValidity = false
+        if cached != nil {
             if ( try? JSONDecoder().decode(T.self, from: data) ) != nil {
-                data = cached!
-            } else {
-                let req = URLRequest(url: url, timeoutInterval: inv.Timeout)
-                let (res, _) = try await URLSession.shared.data(for: req)
-                data = res
-                cacheData(res, hash)
+                dataValidity = true
             }
+        }
+        if dataValidity && Bool.random() { /// using random as a way to eventually update cached data
+            data = cached!
         } else {
             let req = URLRequest(url: url, timeoutInterval: inv.Timeout)
             let (res, _) = try await URLSession.shared.data(for: req)
             data = res
             cacheData(res, hash)
         }
+        debug = data
         let final = try JSONDecoder().decode(T.self, from: data)
         return final
     } catch {
+        if debug != nil { print("[Inv-Wrapper] \(debug!)") }
         print("[Inv-Wrapper] \(error)")
         return nil
     }
