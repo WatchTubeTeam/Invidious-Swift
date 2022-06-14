@@ -307,9 +307,10 @@ internal func fetch<T: Decodable>(_ T: T.Type, _ path: String, params: [URLQuery
             data = res
             cacheData(res, hash)
         }
-        let final = try? JSONDecoder().decode(T.self, from: data)
+        let final = try JSONDecoder().decode(T.self, from: data)
         return final
     } catch {
+        print("[Inv-Wrapper] \(error)")
         return nil
     }
 }
