@@ -18,12 +18,12 @@ public struct inv {
     /// # Usage
     /// ```swift
     ///
-    /// await inv.setInstance(url: URL(string: "https://invidious.osi.kr")!)
+    /// await inv.setInstance(url: URL(string: "https://vid.puffyan.us")!)
     /// // This function will return a Bool depending on the selftest result
     /// // If you receive false, the instance was not set as the selftest failed
     ///
     /// // You may skip the check like this
-    /// await inv.setInstance(url: URL(string: "https://invidious.osi.kr")!, skipCheck: true)
+    /// await inv.setInstance(url: URL(string: "https://vid.puffyan.us")!, skipCheck: true)
     ///
     /// ```
     /// - Parameter url: A URL to the instance you wish to use
@@ -276,7 +276,7 @@ internal extension String {
 }
 
 internal func fetch<T: Decodable>(_ T: T.Type, _ path: String, params: [URLQueryItem] = []) async -> T! {
-    let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://invidious.osi.kr/"
+    let instanceURLstring = UserDefaults.standard.string(forKey: "InvidiousInstanceURL") ?? "https://vid.puffyan.us/"
     guard let instance = URL(string: instanceURLstring) else { return nil}
     
     var debug: Data! = nil
