@@ -8,7 +8,7 @@
 import Foundation
 
 extension InvVideoThumbnail {
-    var source: String = {
+    var source: String {
         let src = URL(string: self.url)
         let ytHost = URL(string: "https://i.ytimg.com/")
         let finalurl = URL(string: src!.path, relativeTo: ytHost)
