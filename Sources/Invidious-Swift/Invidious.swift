@@ -297,11 +297,13 @@ internal func fetch<T: Decodable>(_ T: T.Type, _ path: String, params: [URLQuery
         let cached = getData(hash)
         var dataValidity = false
         if cached != nil {
-            if ( try? JSONDecoder().decode(T.self, from: data) ) != nil {
+            if ( try? JSONDecoder().decode(T.self, from: cached!) ) != nil {
                 dataValidity = true
             }
+        } else {
+            dataValidity = false
         }
-        if dataValidity && Bool.random() { /// using random as a way to eventually update cached data
+        if dataValidity == true && Bool.random() { /// using random as a way to eventually update cached data
             data = cached!
         } else {
             let req = URLRequest(url: url, timeoutInterval: inv.Timeout)
