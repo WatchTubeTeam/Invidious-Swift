@@ -11,7 +11,7 @@ public extension InvVideoThumbnail {
     public var source: String {
         let src = URLComponents(string: self.url)
         let ytHost = URL(string: "https://i.ytimg.com/")
-        let finalurl = URL(string: src!.path, relativeTo: ytHost)
-        return finalurl!.absoluteString
+        let id = src!.url!.pathComponents.dropFirst()[2]
+        let finalurl = URL(string: "/vi/\(id)/maxresdefault.jpg", relativeTo: ytHost)
     }
 }
