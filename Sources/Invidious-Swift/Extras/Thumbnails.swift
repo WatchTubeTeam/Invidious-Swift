@@ -8,11 +8,11 @@
 import Foundation
 
 public extension InvVideoThumbnail {
-    public var source: String {
+    var source: String {
         let src = URLComponents(string: self.url)
         let ytHost = URL(string: "https://i.ytimg.com/")
         let id = src!.url!.pathComponents.dropFirst()[2]
         let finalurl = URL(string: "/vi/\(id)/maxresdefault.jpg", relativeTo: ytHost)
-        return finalurl
+        return finalurl!.absoluteString
     }
 }
