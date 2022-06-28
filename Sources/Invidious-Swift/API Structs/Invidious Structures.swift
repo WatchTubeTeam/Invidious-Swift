@@ -4,7 +4,7 @@
 //
 //  Created by llsc12 on 10/04/2022.
 //
-//  Structures generated with quicktype but patched manually
+//  Structures generated with quicktype but patched manually to fix random issues
 
 import Foundation
 
@@ -17,7 +17,8 @@ public struct InvSearchSuggestions: Codable {
 
 // MARK: - InvPlaylist
 /// Playlist data and it's list of videos
-public struct InvPlaylist: Codable {
+public struct InvPlaylist: Codable, Identifiable {
+    public var id: String { playlistID }
     public let type: String
     public let title, playlistID: String
     public let playlistThumbnail: String
@@ -49,7 +50,8 @@ public struct InvAuthorMedia: Codable {
 
 // MARK: - InvPlaylistVideo
 /// Basic data of a video in a playlist
-public struct InvPlaylistVideo: Codable {
+public struct InvPlaylistVideo: Codable, Identifiable {
+    public var id: String { videoID }
     public let title, videoID, author, authorID: String
     public let authorURL: String
     public let videoThumbnails: [InvVideoThumbnail]
@@ -87,13 +89,14 @@ public enum InvVideoThumbnailQuality: String, Codable {
 // MARK: - InvChannelPlaylists
 /// A channel's playlists
 public struct InvChannelPlaylists: Codable {
-    public let playlists: [InvChannelPlaylistVideo]
+    public let playlists: [InvChannelPlaylist]
     public let continuation: String?
 }
 
-// MARK: - InvPlaylistElement
+// MARK: - InvChannelPlaylist
 /// Playlist from a channel
-public struct InvChannelPlaylistVideo: Codable {
+public struct InvChannelPlaylist: Codable, Identifiable {
+    public var id: String { playlistID }
     public let type: String
     public let title, playlistID: String
     public let playlistThumbnail: String
@@ -115,7 +118,8 @@ public struct InvChannelPlaylistVideo: Codable {
 
 // MARK: - InvChannelVideoElement
 /// A channel's video
-public struct InvChannelVideo: Codable {
+public struct InvChannelVideo: Codable, Identifiable {
+    public var id: String { videoID }
     public let type: String
     public let title, videoID: String
     public let author: String
@@ -143,7 +147,8 @@ public struct InvChannelVideo: Codable {
 }
 
 // MARK: - InvPopularVideo
-public struct InvPopularVideo: Codable {
+public struct InvPopularVideo: Codable, Identifiable {
+    public var id: String { videoID }
     public let type: String
     public let title, videoID: String
     public let videoThumbnails: [InvVideoThumbnail]
@@ -164,7 +169,8 @@ public struct InvPopularVideo: Codable {
 }
 
 // MARK: - InvTrendingVideo
-public struct InvTrendingVideo: Codable {
+public struct InvTrendingVideo: Codable, Identifiable {
+    public var id: String { videoID }
     public let type: String
     public let title, videoID, author, authorID: String
     public let authorURL: String
@@ -195,7 +201,8 @@ public struct InvCaptions: Codable {
 }
 
 // MARK: - InvCaption
-public struct InvCaption: Codable {
+public struct InvCaption: Codable, Identifiable {
+    public var id: String { languageCode }
     public let label, languageCode, url: String
 }
 
@@ -214,7 +221,8 @@ public struct InvComments: Codable {
 }
 
 // MARK: - InvComment
-public struct InvComment: Codable {
+public struct InvComment: Codable, Identifiable {
+    public var id: String { commentID }
     public let author: String
     public let authorThumbnails: [InvAuthorMedia]
     public let authorID, authorURL: String
@@ -254,7 +262,8 @@ public struct InvReplies: Codable {
 }
 
 // MARK: - InvVideo
-public struct InvVideo: Codable {
+public struct InvVideo: Codable, Identifiable {
+    public var id: String { videoID }
     public let type: String
     public let title, videoID: String
     public let videoThumbnails: [InvVideoThumbnail]
@@ -300,7 +309,8 @@ public struct InvVideo: Codable {
 }
 
 // MARK: - InvAdaptiveFormat
-public struct InvAdaptiveFormat: Codable {
+public struct InvAdaptiveFormat: Codable, Identifiable {
+    public var id: String { itag }
     public let index, bitrate, adaptiveFormatInit: String
     public let url: String
     public let itag, type, clen, lmt: String
@@ -318,7 +328,8 @@ public struct InvAdaptiveFormat: Codable {
 }
 
 // MARK: - InvVideoCaption
-public struct InvVideoCaption: Codable {
+public struct InvVideoCaption: Codable, Identifiable {
+    public var id: String { languageCode }
     public let label, languageCode, url: String
 
     public enum CodingKeys: String, CodingKey {
@@ -329,7 +340,8 @@ public struct InvVideoCaption: Codable {
 }
 
 // MARK: - InvFormatStream
-public struct InvFormatStream: Codable {
+public struct InvFormatStream: Codable, Identifiable {
+    public var id: String { itag }
     public let url: String
     public let itag: String
     public let type: String
@@ -342,7 +354,8 @@ public struct InvFormatStream: Codable {
 }
 
 // MARK: - InvRecommendedVideo
-public struct InvRecommendedVideo: Codable {
+public struct InvRecommendedVideo: Codable, Identifiable {
+    public var id: String { videoID }
     public let videoID, title: String
     public let videoThumbnails: [InvVideoThumbnail]
     public let author, authorURL, authorID: String
@@ -403,7 +416,8 @@ public struct InvUsers: Codable {
 }
 
 // MARK: - InvChannel
-public struct InvChannel: Codable {
+public struct InvChannel: Codable, Identifiable {
+    public var id: String { authorID }
     public let author: String
     public let authorID: String
     public let authorURL: String
@@ -427,7 +441,8 @@ public struct InvChannel: Codable {
 }
 
 // MARK: - InvRelatedChannel
-public struct InvRelatedChannel: Codable {
+public struct InvRelatedChannel: Codable, Identifiable {
+    public var id: String { authorID }
     public let author, authorID, authorURL: String
     public let authorThumbnails: [InvAuthorThumbnail]
 
@@ -446,7 +461,8 @@ public struct InvAuthorThumbnail: Codable {
 }
 
 // MARK: - InvSearchElement
-public struct InvSearchResult: Codable {
+public struct InvSearchResult: Codable, Identifiable {
+    public var id: String { videoID ?? playlistID ?? authorID }
     public let type: String
     public let author, authorID, authorURL: String
     public let authorThumbnails: [InvAuthorThumbnail]?
@@ -479,7 +495,8 @@ public struct InvSearchResult: Codable {
 }
 
 // MARK: - InvSearchVideo
-public struct InvSearchVideo: Codable {
+public struct InvSearchVideo: Codable, Identifiable {
+    public var id: String { videoID }
     public let title, videoID: String
     public let lengthSeconds: Int
     public let videoThumbnails: [InvVideoThumbnail]
