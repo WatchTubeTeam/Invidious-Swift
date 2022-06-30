@@ -301,7 +301,8 @@ public struct InvVideo: Codable {
 
 // MARK: - InvAdaptiveFormat
 public struct InvAdaptiveFormat: Codable {
-    public let index, bitrate, adaptiveFormatInit: String
+    public let index: String?
+    public let bitrate, adaptiveFormatInit: String
     public let url: String
     public let itag, type, clen, lmt: String
     public let projectionType: String
