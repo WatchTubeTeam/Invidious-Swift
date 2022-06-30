@@ -362,7 +362,7 @@ public struct InvRecommendedVideo: Codable, Identifiable {
     public let author, authorURL, authorID: String
     public let lengthSeconds: Int
     public let viewCountText: String
-    public let viewCount: Double
+    public let viewCount: Double?
 
     public enum CodingKeys: String, CodingKey {
         case videoID = "videoId"
