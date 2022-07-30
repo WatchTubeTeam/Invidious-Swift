@@ -311,7 +311,8 @@ public struct InvVideo: Codable, Identifiable {
 // MARK: - InvAdaptiveFormat
 public struct InvAdaptiveFormat: Codable, Identifiable {
     public var id: String { itag }
-    public let index, bitrate, adaptiveFormatInit: String
+    public let index, adaptiveFormatInit: String?
+    public let bitrate: String
     public let url: String
     public let itag, type, clen, lmt: String
     public let projectionType: String
@@ -361,7 +362,7 @@ public struct InvRecommendedVideo: Codable, Identifiable {
     public let author, authorURL, authorID: String
     public let lengthSeconds: Int
     public let viewCountText: String
-    public let viewCount: Double
+    public let viewCount: Double?
 
     public enum CodingKeys: String, CodingKey {
         case videoID = "videoId"
