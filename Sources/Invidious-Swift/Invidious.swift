@@ -290,7 +290,15 @@ internal func fetch<T: Decodable>(_ T: T.Type, _ path: String, params: [URLQuery
         var data: Data = Data()
         
         let hash: String = {
-            let path = url.pathComponents.joined(separator: "/")
+            var path = url.pathComponents.joined(separator: "/")
+            let paramsStr: String = {
+                var str = ""
+                for param in params {
+                    str.append(param.param)
+                }
+                return str
+            }()
+            path.append("?\(paramsStr)")
             return path.hashed
         }()
         
@@ -318,5 +326,11 @@ internal func fetch<T: Decodable>(_ T: T.Type, _ path: String, params: [URLQuery
         if debug != nil { print("[Inv-Wrapper] \(debug!)") }
         print("[Inv-Wrapper] \(error)")
         return nil
+    }
+}
+
+extension URLQueryItem {
+    var param: String {
+        return "\(self.name)=\(self.value ?? "")"
     }
 }
